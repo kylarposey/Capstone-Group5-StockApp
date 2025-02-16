@@ -1,0 +1,30 @@
+name: Run Jest Tests
+
+on:
+  push:
+    branches:
+      - main  # Trigger on pushes to main branch
+  pull_request:
+    branches:
+      - main  # Trigger on pull requests to main branch
+
+jobs:
+  test:
+    runs-on: ubuntu-latest  # You can choose another OS if needed
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'  # Use the Node version you're using for React app
+
+      - name: Install dependencies
+        working-directory: stock-dashboard  # Run this inside the React app folder
+        run: npm install
+
+      - name: Run Jest tests
+        working-directory: stock-dashboard  # Run Jest tests inside React app folder
+        run: npm test -- --watchAll=false  # Run tests once (disable watch mode)
