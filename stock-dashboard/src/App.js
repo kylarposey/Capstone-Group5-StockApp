@@ -1,4 +1,3 @@
-//import logo from './logo.svg';
 import About from './Components/About';
 import LoginPage from './Components/LoginPage';
 import './App.css';
@@ -19,20 +18,16 @@ function NotFound() {
 }
 
 function App() {
-	return (
-		<BrowserRouter> {/* Use BrowserRouter, not Router */}
-			<Header />
-			<div className="container mt-4">
-			<Routes>
-				<Route path="/" element={<Home />} />
-				<Route path="/about" element={<About />} />
-				<Route path="/login" element={<LoginPage />} />
-				<Route path="*" element={<NotFound />} /> {/* Catch-all route for unknown pages */}
-			</Routes>
-			</div>
-		</BrowserRouter>
-
-	);
+    return (
+        <BrowserRouter>
+            <Header /> 
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/about" element={<About />} />
+                <Route path="*" element={<NotFound />} />
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
 export default App;
