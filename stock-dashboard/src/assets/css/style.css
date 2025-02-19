@@ -1,0 +1,211 @@
+/* ============================== */
+/*            GLOBAL              */
+/* ============================== */
+body {
+    text-align: center;
+    background-color: #f5f5f5;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* ============================== */
+/*            HEADER              */
+/* ============================== */
+.header {
+    background: #f5e6d8;  /* Lighter tan background */
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    text-decoration: none;
+}
+
+/* ============================== */
+/*          HOMEPAGE STYLES       */
+/* ============================== */
+.home-container {
+    text-align: center;
+    padding: 50px 20px;
+    background-color: #111; /* Dark background like reference */
+    color: white;
+}
+
+.home-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.home-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+    color: #ddd;
+}
+
+/* ============================== */
+/*           CARD STYLES          */
+/* ============================== */
+.card-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.card {
+    flex: 1;
+    min-width: 300px;
+    max-width: 350px;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    color: #000;
+    font-weight: bold;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-yellow {
+    background-color: #ffff99; /* Soft Yellow */
+}
+
+.card-green {
+    background-color: #c6f6d5; /* Light Green */
+}
+
+.card-blue {
+    background-color: #bee3f8; /* Light Blue */
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* ============================== */
+/*       CARD BUTTON STYLES       */
+/* ============================== */
+.card-button {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 15px;
+    background-color: #000;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+.card-button:hover {
+    background-color: #444;
+}
+
+
+/* ============================== */
+/*       SEARCH BAR STYLING       */
+/* ============================== */
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.search-input {
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.search-button {
+    padding: 8px 12px;
+    background-color: #333; /* Dark grey button */
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.search-button:hover {
+    background-color: #555; /* Slightly lighter grey on hover */
+}
+
+/* ============================== */
+/*         NAVIGATION BAR         */
+/* ============================== */
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links li {
+    display: inline;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 700;
+    padding: 6px 12px; /* Space around text */
+    border: 1px solid #333; /* Rectangle border */
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.nav-links a:hover {
+    background-color: #333; /* Dark grey on hover */
+    color: white; /* White text on hover */
+}
+
+/* ============================== */
+/*            POP-UP              */
+/* ============================== */
+.popup {
+    position: absolute;
+    background: white;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    z-index: 1000;
+    border-radius: 5px;
+    width: 250px;
+    text-align: center;
+    color: black;  /* ✅ Explicitly set text color */
+}
+
+.popup-content {
+    position: relative;
+}
+
+.popup .close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.popup h2,
+.popup p {
+    color: black !important;
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+.loading-text {
+    color: blue;
+    font-size: 14px;
+}
+
+.error-text {
+    color: red;
+    font-size: 14px;
+}
