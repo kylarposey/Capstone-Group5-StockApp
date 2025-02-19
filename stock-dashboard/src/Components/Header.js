@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import "../assests/css/style.css";  // Ensure styles are imported
+import "../assets/css/style.css";  // Ensure styles are imported
 
 const API_KEY = process.env.REACT_APP_ALPHA_VANTAGE_API_KEY;
 

@@ -1,18 +1,15 @@
 import About from './Components/About';
 import LoginPage from './Components/LoginPage';
-import './App.css';
+import './assets/css/style.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter , Routes, Route } from 'react-router-dom';
 import Header from './Components/Header';
+import Home from "./Components/Home";
 
 
 
 // Placeholder functions
 // Replace these functions with react components in separate files
-function Home() {
-  return <h1>Home Page</h1>;
-}
-
 function NotFound() {
   return <h1>404 - Page Not Found</h1>;
 }
