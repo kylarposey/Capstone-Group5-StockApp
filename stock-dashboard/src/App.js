@@ -1,4 +1,6 @@
 //import logo from './logo.svg';
+import About from './Components/About';
+import LoginPage from './Components/LoginPage';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter , Routes, Route } from 'react-router-dom';
@@ -12,16 +14,8 @@ function Home() {
   return <h1>Home Page</h1>;
 }
 
-function About() {
-  return <h1>About Page</h1>;
-}
-
 function NotFound() {
   return <h1>404 - Page Not Found</h1>;
-}
-
-function Login() {
-  return <h1>Login Page</h1>;
 }
 
 function App() {
@@ -32,7 +26,7 @@ function App() {
 			<Routes>
 				<Route path="/" element={<Home />} />
 				<Route path="/about" element={<About />} />
-				<Route path="/login" element={<Login />} />
+				<Route path="/login" element={<LoginPage />} />
 				<Route path="*" element={<NotFound />} /> {/* Catch-all route for unknown pages */}
 			</Routes>
 			</div>
