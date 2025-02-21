@@ -14,12 +14,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: '20'  # Use the Node version you're using for React app
+          node-version: '20.x'  # Use the Node version you're using for React app
 
       - name: Install dependencies
         working-directory: stock-dashboard  # Run this inside the React app folder
