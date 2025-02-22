@@ -23,7 +23,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: stock-dashboard  # Run this inside the React app folder
-        run: npm install
+        run: npm ci  # Install dependencies
 
       - name: Run Jest tests
         working-directory: stock-dashboard  # Run Jest tests inside React app folder
