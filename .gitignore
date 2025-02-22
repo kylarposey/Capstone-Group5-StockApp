@@ -67,4 +67,5 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
-node_modules
+
+node_modules/
