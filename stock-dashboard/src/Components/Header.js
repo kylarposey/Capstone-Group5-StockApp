@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import "../assets/css/style.css";  // Ensure styles are imported
-
-const API_KEY = process.env.REACT_APP_ALPHA_VANTAGE_API_KEY;
+import axios from "axios";  // Use axios for API calls
+import "../assets/css/style.css";  
 
 function Header() {
     const [ticker, setTicker] = useState("");
@@ -10,71 +9,42 @@ function Header() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [showPopup, setShowPopup] = useState(false); 
-    const [position, setPosition] = useState({ x: 50, y: 50 }); // Track pop-up position
-    const [dragging, setDragging] = useState(false);
-    const [offset, setOffset] = useState({ x: 0, y: 0 });
+    const [position, setPosition] = useState({ x: 50, y: 50 });
 
-    // Fetch stock data from Alpha Vantage
+    // Fetch stock data from the backend instead of Alpha Vantage directly
     const fetchStockPrice = async () => {
-      setLoading(true);
-      setError("");
-      setStockData(null);
-      setShowPopup(false);
-  
-      try {
-  
-          const response = await fetch(
-              `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${ticker}&apikey=${API_KEY}`
-          );
-  
-          const data = await response.json();
-  
-          if (!data["Global Quote"] || !data["Global Quote"]["01. symbol"]) {
-              setError("Invalid Ticker or API Error");
-              setLoading(false);
-              return;
-          }
-  
-          const stockInfo = {
-              ticker: data["Global Quote"]["01. symbol"] || "N/A",
-              price: data["Global Quote"]["05. price"] || "N/A",
-              change: data["Global Quote"]["09. change"] || "N/A",
-              changePercent: data["Global Quote"]["10. change percent"] || "N/A",
-              timestamp: new Date().toISOString(),
-          };
-  
-          console.log("Stock Info Processed:", stockInfo);  // ✅ Debugging Log
-  
-          setStockData(stockInfo);
-          setShowPopup(true);
-          setLoading(false);
-      } catch (err) {
-          setError("Error fetching stock data");
-          console.error("Fetch Error:", err);  // ✅ Debugging Log
-          setLoading(false);
-      }
-  };
+        setLoading(true);
+        setError("");
+        setStockData(null);
+        setShowPopup(false);
 
-    // Handle mouse events for dragging the pop-up
-    const handleMouseDown = (e) => {
-        setDragging(true);
-        setOffset({
-            x: e.clientX - position.x,
-            y: e.clientY - position.y,
-        });
-    };
-
-    const handleMouseMove = (e) => {
-        if (dragging) {
-            setPosition({
-                x: e.clientX - offset.x,
-                y: e.clientY - offset.y,
+        try {
+            const response = await axios.get(`http://localhost:5000/api/stock`, {
+                params: { symbol: ticker }
             });
-        }
-    };
+            
+            if (!response.data["Global Quote"] || !response.data["Global Quote"]["01. symbol"]) {
+                setError("Invalid Ticker or API Error");
+                setLoading(false);
+                return;
+            }
 
-    const handleMouseUp = () => {
-        setDragging(false);
+            const stockInfo = {
+                ticker: response.data["Global Quote"]["01. symbol"] || "N/A",
+                price: response.data["Global Quote"]["05. price"] || "N/A",
+                change: response.data["Global Quote"]["09. change"] || "N/A",
+                changePercent: response.data["Global Quote"]["10. change percent"] || "N/A",
+                timestamp: new Date().toISOString(),
+            };
+
+            setStockData(stockInfo);
+            setShowPopup(true);
+            setLoading(false);
+        } catch (err) {
+            setError("Error fetching stock data");
+            console.error("Fetch Error:", err);
+            setLoading(false);
+        }
     };
 
     return (
@@ -101,18 +71,7 @@ function Header() {
 
             {/* Movable Pop-up for Stock Data */}
             {showPopup && stockData && (
-                <div
-                    className="popup"
-                    style={{
-                        left: `${position.x}px`,
-                        top: `${position.y}px`,
-                        cursor: dragging ? "grabbing" : "grab",
-                    }}
-                    onMouseDown={handleMouseDown}
-                    onMouseMove={handleMouseMove}
-                    onMouseUp={handleMouseUp}
-                    onMouseLeave={handleMouseUp}
-                >
+                <div className="popup" style={{ left: `${position.x}px`, top: `${position.y}px` }}>
                     <div className="popup-content">
                         <span className="close" onClick={() => setShowPopup(false)}>&times;</span>
                         <h2>{stockData.ticker}</h2>
