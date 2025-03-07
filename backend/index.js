@@ -4,7 +4,11 @@ const axios = require("axios");
 const cors = require("cors");
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: ["http://localhost:3000", "https://your-frontend-url.web.app"],  // Update with your deployed frontend URL
+    methods: ["GET"],
+    allowedHeaders: ["Content-Type"],
+}));
 
 const API_KEY = process.env.ALPHA_VANTAGE_API_KEY;
 
