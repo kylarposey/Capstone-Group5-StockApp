@@ -19,9 +19,10 @@ function Header() {
         setShowPopup(false);
 
         try {
-            const response = await axios.get(`http://localhost:5000/api/stock`, {
+            const response = await axios.get(`https://your-backend.onrender.com/api/stock`, {
                 params: { symbol: ticker }
             });
+            
             
             if (!response.data["Global Quote"] || !response.data["Global Quote"]["01. symbol"]) {
                 setError("Invalid Ticker or API Error");
