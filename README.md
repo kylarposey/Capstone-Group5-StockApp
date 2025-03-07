@@ -11,8 +11,8 @@ To run the code locally do the following:
 - Install the required modules with npm install
 - run the script "npm start" 
 
-To run the hosted app in firebase, go th url below:
-Website Url: https://group5-capstone-project.web.app/
+To run the hosted app in firebase, follow the link: 
+https://group5-capstone-project.web.app/
 
 Running tests:
 To run tests locally do the following:
