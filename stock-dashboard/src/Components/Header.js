@@ -9,7 +9,7 @@ function Header() {
             <ul className="nav-links">
                 <li><Link to="/about">About</Link></li>
                 <li><Link to="/login">Login</Link></li>
-                <li><Link to="/register">Register</Link></li>
+                <li><Link to="/newUser">Register</Link></li>
             </ul>
         </nav>
     );
