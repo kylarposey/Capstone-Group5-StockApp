@@ -1,20 +1,26 @@
-import React from 'react';
-//import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
-
-//import { Navbar, Nav, Button } from 'react-bootstrap';
-//import { Link } from 'react-router-dom'; // Import Link
-
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { auth, googleProvider, signInWithPopup } from "../firebase";
 
 function LoginPage() {
-   return (
-      <div>
-         Kyle Rivera
-         Login Page
+  const navigate = useNavigate();
 
-      </div>
-      
-   );
+  const signInWithGoogle = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+      console.log("User signed in successfully");
+      navigate("/");
+    } catch (error) {
+      console.error("Error signing in:", error);
+    }
+  };
 
+  return (
+    <div className="login-container">
+      <h2>Login to Your Account</h2>
+      <button onClick={signInWithGoogle}>Sign in with Google</button>
+    </div>
+  );
 }
 
 export default LoginPage;

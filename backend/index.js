@@ -5,12 +5,16 @@ const cors = require("cors");
 
 const app = express();
 app.use(cors({
-    origin: ["http://localhost:3000", "https://your-frontend-url.web.app"],  // Update with your deployed frontend URL
+    origin: ["http://localhost:3000", "https://group5-capstone-project.web.app/"],
     methods: ["GET"],
     allowedHeaders: ["Content-Type"],
 }));
 
-const API_KEY = process.env.ALPHA_VANTAGE_API_KEY;
+const API_KEY = process.env.REACT_APP_ALPHA_VANTAGE_API_KEY;;
+
+app.get("/", (req, res) => {
+    res.send("🚀 Backend is running! API available at /api/stock?symbol=AAPL");
+});
 
 app.get("/api/stock", async (req, res) => {
     const { symbol } = req.query;
