@@ -12,8 +12,6 @@ app.use(cors({
 
 const API_KEY = process.env.REACT_APP_ALPHA_VANTAGE_API_KEY;;
 
-console.log("✅ Loaded API Key:", API_KEY || "❌ API KEY NOT FOUND!");
-
 app.get("/", (req, res) => {
     res.send("🚀 Backend is running! API available at /api/stock?symbol=AAPL");
 });
