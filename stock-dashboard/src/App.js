@@ -8,6 +8,7 @@ import { BrowserRouter , Routes, Route } from 'react-router-dom';
 import Header from './Components/Header';
 import Home from "./Components/Home";
 import Footer from './Components/Footer';
+import NewUser from './Components/newUser';
 
 
 
@@ -26,6 +27,8 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<About />} />
                 <Route path="*" element={<NotFound />} />
+                <Route path="/newUser" element={<NewUser />} />
+                <Route path="/login" element={<LoginPage />} />
             </Routes>
             <Footer />
         </BrowserRouter>
