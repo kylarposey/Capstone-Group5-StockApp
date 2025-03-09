@@ -4,11 +4,13 @@ const axios = require("axios");
 const cors = require("cors");
 
 const app = express();
+const cors = require("cors");
 app.use(cors({
-    origin: ["http://localhost:3000", "https://group5-capstone-project.web.app/"],
-    methods: ["GET"],
-    allowedHeaders: ["Content-Type"],
+    origin: ["https://group5-capstone-project.web.app"],
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"]
 }));
+
 
 const API_KEY = process.env.REACT_APP_ALPHA_VANTAGE_API_KEY;;
 
