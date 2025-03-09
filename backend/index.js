@@ -4,7 +4,6 @@ const axios = require("axios");
 const cors = require("cors");
 
 const app = express();
-const cors = require("cors");
 app.use(cors({
     origin: ["https://group5-capstone-project.web.app"],
     methods: ["GET", "POST"],
