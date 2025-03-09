@@ -8,18 +8,17 @@ function Header() {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        // Listen for auth state changes
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
         });
 
-        return () => unsubscribe(); // Cleanup listener on unmount
+        return () => unsubscribe();
     }, []);
 
     const handleLogout = async () => {
         try {
             await signOut(auth);
-            setUser(null); // Reset user state after logout
+            setUser(null);
         } catch (error) {
             console.error("Logout Error:", error);
         }
@@ -39,7 +38,6 @@ function Header() {
                         <li><Link to="/newUser">Register</Link></li>
                     </>
                 ) : (
-                    // Styled Logout button like a navigation link
                     <li><button onClick={handleLogout} className="nav-link-button">Logout</button></li>
                 )}
             </ul>

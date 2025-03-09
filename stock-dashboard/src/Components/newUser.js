@@ -20,8 +20,7 @@ function NewUser() {
 
       console.log("User registered:", user);
 
-      // Redirect user to Login Page after successful registration
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       console.error("Error during registration:", error);
     }
