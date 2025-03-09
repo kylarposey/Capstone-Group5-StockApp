@@ -12,7 +12,7 @@ body {
 /*            HEADER              */
 /* ============================== */
 .header {
-    background: #f5e6d8;  /* Lighter tan background */
+    background: #f5e6d8;
     padding: 15px 20px;
     display: flex;
     justify-content: space-between;
@@ -44,7 +44,7 @@ footer{
 .home-container {
     text-align: center;
     padding: 50px 20px;
-    background-color: #111; /* Dark background like reference */
+    background-color: #111;
     color: white;
 }
 
@@ -83,15 +83,15 @@ footer{
 }
 
 .card-yellow {
-    background-color: #ffff99; /* Soft Yellow */
+    background-color: #ffff99;
 }
 
 .card-green {
-    background-color: #c6f6d5; /* Light Green */
+    background-color: #c6f6d5;
 }
 
 .card-blue {
-    background-color: #bee3f8; /* Light Blue */
+    background-color: #bee3f8;
 }
 
 .card:hover {
@@ -137,7 +137,7 @@ footer{
 
 .search-button {
     padding: 8px 12px;
-    background-color: #333; /* Dark grey button */
+    background-color: #333;
     color: white;
     border: none;
     cursor: pointer;
@@ -146,7 +146,7 @@ footer{
 }
 
 .search-button:hover {
-    background-color: #555; /* Slightly lighter grey on hover */
+    background-color: #555;
 }
 
 /* ============================== */
@@ -155,27 +155,40 @@ footer{
 .nav-links {
     list-style: none;
     display: flex;
-    gap: 20px;
+    align-items: center; /* Ensures vertical alignment */
+    gap: 10px;
+    padding: 0;
 }
 
 .nav-links li {
-    display: inline;
+    display: flex; /* Ensures consistent alignment */
 }
 
-.nav-links a {
+.nav-links a, .nav-link-button {
     text-decoration: none;
-    color: #333;
-    font-weight: 700;
-    padding: 6px 12px; /* Space around text */
-    border: 1px solid #333; /* Rectangle border */
+    color: black;
+    font-size: 16px;
+    padding: 8px 12px;
+    border: 2px solid black;
     border-radius: 4px;
-    transition: background-color 0.3s, color 0.3s;
+    background: none;
+    cursor: pointer;
+    transition: 0.3s;
+    display: inline-block; /* Ensures inline consistency */
 }
 
-.nav-links a:hover {
-    background-color: #333; /* Dark grey on hover */
-    color: white; /* White text on hover */
+.nav-link-button {
+    font-family: inherit; /* Matches the font style with other links */
+    border: 2px solid black;
+    background: none;
+    outline: none;
 }
+
+.nav-links a:hover, .nav-link-button:hover {
+    background: black;
+    color: white;
+}
+
 
 /* ============================== */
 /*            POP-UP              */
@@ -189,7 +202,7 @@ footer{
     border-radius: 5px;
     width: 250px;
     text-align: center;
-    color: black;  /* ✅ Explicitly set text color */
+    color: black;
 }
 
 .popup-content {

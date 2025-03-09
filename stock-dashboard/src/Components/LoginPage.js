@@ -1,51 +1,26 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import "../assets/css/style.css"; 
+import { auth, googleProvider, signInWithPopup } from "../firebase";
 
 function LoginPage() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    const navigate = useNavigate();
-    
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        setError("");
-        
-        const auth = getAuth();
-        try {
-            await signInWithEmailAndPassword(auth, email, password);
-            navigate("/"); // Redirect to home after login
-        } catch (error) {
-            setError("Invalid email or password.");
-            console.error("Login Error:", error);
-        }
-    };
+  const navigate = useNavigate();
 
-    return (
-        <div className="auth-container">
-            <h2>Login to Your Account</h2>
-            <form onSubmit={handleLogin} className="auth-form">
-                <input 
-                    type="email" 
-                    placeholder="Email" 
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                />
-                <input 
-                    type="password" 
-                    placeholder="Password" 
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <button type="submit">Login</button>
-            </form>
-            {error && <p className="error-text">{error}</p>}
-        </div>
-    );
+  const signInWithGoogle = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+      console.log("User signed in successfully");
+      navigate("/");
+    } catch (error) {
+      console.error("Error signing in:", error);
+    }
+  };
+
+  return (
+    <div className="login-container">
+      <h2>Login to Your Account</h2>
+      <button onClick={signInWithGoogle}>Sign in with Google</button>
+    </div>
+  );
 }
 
 export default LoginPage;
