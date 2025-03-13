@@ -44,41 +44,52 @@ app.post("/api/generatePortfolio", async (req, res) => {
     }
 
     try {
-        // Use Alpha Vantage to fetch stock data based on preferences
-        const selectedStocks = [];
-        const stockCategories = {
-            "Growth stocks": ["AAPL", "TSLA", "NVDA"],
-            "Dividend stocks": ["KO", "JNJ", "PG"],
-            "ETFs": ["VOO", "SPY", "SCHD"],
-            "Cryptocurrencies": ["BTC", "ETH", "SOL"],
-            "REITs": ["O", "VNQ", "SPG"]
+        // Initialize empty categories
+        const selectedPortfolio = {
+            stocks: [],
+            etfs: [],
+            bonds: [],
+            crypto: [],
         };
 
-        // Filter Stocks based on Preferences
+        // Map investment categories to corresponding assets
+        const investmentCategories = {
+            "Growth stocks": { type: "stocks", symbols: ["AAPL", "TSLA", "NVDA"] },
+            "Dividend stocks": { type: "stocks", symbols: ["KO", "JNJ", "PG"] },
+            "ETFs": { type: "etfs", symbols: ["VOO", "SPY", "SCHD"] },  // ETFs should be saved here
+            "Cryptocurrencies": { type: "crypto", symbols: ["BTC", "ETH", "SOL"] },
+            "REITs": { type: "stocks", symbols: ["O", "VNQ", "SPG"] },
+        };
+
+        // Loop through selected investment types
         for (const type of preferences.investmentTypes) {
-            if (stockCategories[type]) {
-                for (const symbol of stockCategories[type]) {
+            if (investmentCategories[type]) {
+                const { type: category, symbols } = investmentCategories[type];
+
+                for (const symbol of symbols) {
                     const stockResponse = await axios.get(
                         `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`
                     );
-                    selectedStocks.push(stockResponse.data["Global Quote"]);
+
+                    const stockData = stockResponse.data["Global Quote"];
+                    
+                    // Ensure it gets saved in the right category
+                    selectedPortfolio[category].push(stockData);
                 }
             }
         }
 
-        const generatedPortfolio = {
-            stocks: selectedStocks,
-            bonds: [], // You can extend this by pulling bond data
-            crypto: [], // Pull crypto data dynamically
-            etfs: [], // Add selected ETFs
-        };
+        // Save to Firestore under the correct categories
+        const userRef = doc(db, "Users", userId);
+        await setDoc(userRef, { generatedPortfolio: selectedPortfolio }, { merge: true });
 
-        res.json(generatedPortfolio);
+        res.json(selectedPortfolio);
     } catch (error) {
         console.error("Error generating portfolio:", error);
         res.status(500).json({ error: "Failed to generate portfolio" });
     }
 });
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

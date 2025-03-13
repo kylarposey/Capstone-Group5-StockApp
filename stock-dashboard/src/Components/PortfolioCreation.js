@@ -60,7 +60,7 @@ function PortfolioCreation() {
                 // Save preferences first
                 await setDoc(userRef, { portfolio: formData }, { merge: true });
     
-                // Call backend to generate portfolio
+                // Call backend to generate categorized portfolio
                 const response = await fetch("https://capstone-group5-stockapp.onrender.com/api/generatePortfolio", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -69,10 +69,10 @@ function PortfolioCreation() {
     
                 const generatedPortfolio = await response.json();
     
-                // Save generated portfolio to Firestore
+                // Ensure it correctly updates in Firestore
                 await setDoc(userRef, { generatedPortfolio }, { merge: true });
     
-                console.log("Portfolio saved successfully!");
+                console.log("Portfolio saved successfully with correct categorization!");
             } else {
                 console.error("User document not found.");
             }
@@ -82,6 +82,7 @@ function PortfolioCreation() {
             console.error("Error saving portfolio:", error);
         }
     };
+    
     
     
     
