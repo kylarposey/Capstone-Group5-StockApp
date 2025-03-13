@@ -2,21 +2,35 @@ require("dotenv").config();
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
-const { doc, setDoc } = require("firebase/firestore");
+const { initializeApp } = require("firebase/app");
+const { getFirestore, doc, setDoc } = require("firebase/firestore");
+
+// ✅ Use the same Firebase config as in frontend
+const firebaseConfig = {
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp); // ✅ Get Firestore instance
 
 const app = express();
 app.use(express.json()); // Enable JSON body parsing
+
+// ✅ CORS Configuration
 const corsOptions = {
-    origin: ["http://localhost:3000", "https://group5-capstone-project.web.app"], // Allowed frontends
-    methods: ["GET", "POST", "OPTIONS"], // Allow necessary HTTP methods
-    allowedHeaders: ["Content-Type", "Authorization"], // Allow important headers
-    credentials: true
+  origin: ["http://localhost:3000", "https://group5-capstone-project.web.app"], 
+  methods: ["GET", "POST", "OPTIONS"], 
+  allowedHeaders: ["Content-Type", "Authorization"], 
+  credentials: true
 };
 
 app.use(cors(corsOptions));
-
-// Handle Preflight Requests
-app.options("*", cors(corsOptions));
+app.options("*", cors(corsOptions)); // Handle preflight requests
 
 const API_KEY = process.env.REACT_APP_ALPHA_VANTAGE_API_KEY;
 
