@@ -53,30 +53,30 @@ function PortfolioCreation() {
         }
     
         try {
-            const response = await fetch("https://capstone-group5-stockapp.onrender.com/api/generatePortfolio", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${user.accessToken}` // Ensure authentication if needed
-                },
-                body: JSON.stringify({
-                    userId: user.uid,
-                    preferences: formData
-                }),
-                credentials: "include" // Ensure cookies & authentication info are sent
-            });
+            const userRef = doc(db, "Users", user.uid);
+            const userDoc = await getDoc(userRef);
     
-            if (!response.ok) {
-                throw new Error("Failed to fetch portfolio data");
+            if (userDoc.exists()) {
+                // Save preferences first
+                await setDoc(userRef, { portfolio: formData }, { merge: true });
+    
+                // Call backend to generate portfolio
+                const response = await fetch("https://capstone-group5-stockapp.onrender.com/api/generatePortfolio", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ userId: user.uid, preferences: formData }),
+                });
+    
+                const generatedPortfolio = await response.json();
+    
+                // Save generated portfolio to Firestore
+                await setDoc(userRef, { generatedPortfolio }, { merge: true });
+    
+                console.log("Portfolio saved successfully!");
+            } else {
+                console.error("User document not found.");
             }
     
-            const portfolioData = await response.json();
-    
-            // ✅ Save generated portfolio to Firestore
-            const userRef = doc(db, "Users", user.uid);
-            await setDoc(userRef, { generatedPortfolio: portfolioData }, { merge: true });
-    
-            console.log("Portfolio saved successfully!", portfolioData);
             navigate("/");
         } catch (error) {
             console.error("Error saving portfolio:", error);
