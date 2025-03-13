@@ -44,27 +44,26 @@ app.post("/api/generatePortfolio", async (req, res) => {
     }
 
     try {
-        // Initialize empty categories
-        const selectedPortfolio = {
-            stocks: [],
-            etfs: [],
-            bonds: [],
-            crypto: [],
-        };
+        // Initialize portfolio with only selected categories
+        const selectedPortfolio = {};
 
         // Map investment categories to corresponding assets
         const investmentCategories = {
             "Growth stocks": { type: "stocks", symbols: ["AAPL", "TSLA", "NVDA"] },
             "Dividend stocks": { type: "stocks", symbols: ["KO", "JNJ", "PG"] },
-            "ETFs": { type: "etfs", symbols: ["VOO", "SPY", "SCHD"] },  // ETFs should be saved here
+            "ETFs": { type: "etfs", symbols: ["VOO", "SPY", "SCHD"] },
             "Cryptocurrencies": { type: "crypto", symbols: ["BTC", "ETH", "SOL"] },
-            "REITs": { type: "stocks", symbols: ["O", "VNQ", "SPG"] },
+            "REITs": { type: "stocks", symbols: ["O", "VNQ", "SPG"] }
         };
 
-        // Loop through selected investment types
+        // Loop through selected investment types from the questionnaire
         for (const type of preferences.investmentTypes) {
             if (investmentCategories[type]) {
                 const { type: category, symbols } = investmentCategories[type];
+
+                if (!selectedPortfolio[category]) {
+                    selectedPortfolio[category] = []; // Only create category if it's selected
+                }
 
                 for (const symbol of symbols) {
                     const stockResponse = await axios.get(
@@ -72,16 +71,16 @@ app.post("/api/generatePortfolio", async (req, res) => {
                     );
 
                     const stockData = stockResponse.data["Global Quote"];
-                    
-                    // Ensure it gets saved in the right category
                     selectedPortfolio[category].push(stockData);
                 }
             }
         }
 
-        // Save to Firestore under the correct categories
-        const userRef = doc(db, "Users", userId);
-        await setDoc(userRef, { generatedPortfolio: selectedPortfolio }, { merge: true });
+        // Save the portfolio ONLY if the user selected investments
+        if (Object.keys(selectedPortfolio).length > 0) {
+            const userRef = doc(db, "Users", userId);
+            await setDoc(userRef, { generatedPortfolio: selectedPortfolio }, { merge: true });
+        }
 
         res.json(selectedPortfolio);
     } catch (error) {
@@ -89,6 +88,7 @@ app.post("/api/generatePortfolio", async (req, res) => {
         res.status(500).json({ error: "Failed to generate portfolio" });
     }
 });
+
 
 
 const PORT = process.env.PORT || 5000;
