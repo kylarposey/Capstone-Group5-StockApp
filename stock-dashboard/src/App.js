@@ -9,6 +9,7 @@ import Header from './Components/Header';
 import Home from "./Components/Home";
 import Footer from './Components/Footer';
 import NewUser from './Components/newUser';
+import PortfolioCreation from './Components/PortfolioCreation';
 
 
 
@@ -21,17 +22,22 @@ function NotFound() {
 
 function App() {
     return (
-        <BrowserRouter>
-            <Header /> 
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
-                <Route path="*" element={<NotFound />} />
-                <Route path="/newUser" element={<NewUser />} />
-                <Route path="/login" element={<LoginPage />} />
-            </Routes>
-            <Footer />
-        </BrowserRouter>
+        <div className="app-container">
+            <BrowserRouter>
+                <Header />
+                <main className="main-content">
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/about" element={<About />} />
+                        <Route path="/newUser" element={<NewUser />} />
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/PortfolioCreation" element={<PortfolioCreation />} />
+                        <Route path="*" element={<NotFound />} />
+                    </Routes>
+                </main>
+                <Footer />
+            </BrowserRouter>
+        </div>
     );
 }
 

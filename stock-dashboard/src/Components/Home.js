@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import "../assets/css/style.css"; 
+import "../assets/css/style.css";
 
 function Home() {
     const [ticker, setTicker] = useState("");
@@ -10,18 +12,31 @@ function Home() {
     const [error, setError] = useState("");
     const [showPopup, setShowPopup] = useState(false);
     const [position, setPosition] = useState({ x: 50, y: 50 });
+    const [user, setUser] = useState(null);
+    const navigate = useNavigate();
 
-    // Fetch stock data from the backend
+    // Track user authentication state
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            console.log("Auth state changed: ", currentUser); // Debugging
+            setUser(currentUser);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
     const fetchStockPrice = async () => {
         setLoading(true);
         setError("");
         setStockData(null);
         setShowPopup(false);
 
-        try {
-            const response = await axios.get(
-                `https://capstone-group5-stockapp.onrender.com/api/stock?symbol=${ticker}`
-            );
+        const API_URL = process.env.NODE_ENV === "development"
+        ? "http://localhost:5000/api/stock"
+        : "https://capstone-group5-stockapp.onrender.com/api/stock";
+
+    try {
+        const response = await axios.get(`${API_URL}?symbol=${ticker}`);
 
             const data = response.data;
             if (!data["Global Quote"] || !data["Global Quote"]["01. symbol"]) {
@@ -45,6 +60,15 @@ function Home() {
             setError("Error fetching stock data");
             console.error("Fetch Error:", err);
             setLoading(false);
+        }
+    };
+
+    const handlePortfolioClick = () => {
+        if (user) {
+            console.log("User exists, navigating to portfolio creation."); // Debugging
+            navigate("/portfolioCreation");
+        } else {
+            console.log("No user detected, button should be disabled."); // Debugging
         }
     };
 
@@ -79,10 +103,14 @@ function Home() {
                 {/* Portfolio Management Card */}
                 <div className="card card-green">
                     <h2>Portfolio</h2>
-                    <p>Manage and analyze your investments.</p>
-                    <Link to="/portfolio" className="card-button">
-                        View Portfolio
-                    </Link>
+                    <p>Create and Manage your investments.</p>
+                    <button 
+                        onClick={handlePortfolioClick} 
+                        className={`card-button ${!user ? "disabled-button" : ""}`} 
+                        disabled={!user}
+                    >
+                        Generate Portfolio
+                    </button>
                 </div>
 
                 {/* Market Trends Card */}

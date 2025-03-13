@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "build/",
+    "public": "stock-dashboard/build",
     "ignore": [
       "firebase.json",
       "**/.*",
