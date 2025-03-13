@@ -146,8 +146,8 @@ function PortfolioCreation() {
                     <select name="portfolioMix" className="input-field" onChange={handleChange} required>
                         <option value="">Select...</option>
                         <option value="Mostly stocks">Mostly stocks</option>
-                        <option value="Balanced stocks & bonds">Balanced stocks & bonds</option>
-                        <option value="Conservative (more bonds, fewer stocks)">Conservative (more bonds, fewer stocks)</option>
+                        <option value="Balanced stocks & ETFs">Balanced stocks & ETFs</option>
+                        <option value="Conservative (more ETFs, fewer stocks)">Conservative (more ETFs, fewer stocks)</option>
                     </select>
                 </div>
 

@@ -49,6 +49,11 @@ app.get("/api/stock", async (req, res) => {
 
 app.use(express.json()); // Enable JSON parsing
 
+const pickRandom = (array, count) => {
+    let shuffled = [...array].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+};
+
 app.post("/api/generatePortfolio", async (req, res) => {
     const { userId, preferences } = req.body;
 
@@ -57,53 +62,71 @@ app.post("/api/generatePortfolio", async (req, res) => {
     }
 
     try {
-        // 🔹 Initialize an empty portfolio object
-        const selectedPortfolio = {};
+        // 🔹 Initialize portfolio structure
+        const selectedPortfolio = { stocks: [], etfs: [] };
 
-        // 🔹 Investment Categories Map
+        // 🔹 Expanded Investment Categories
         const investmentCategories = {
-            "Growth stocks": { type: "stocks", symbols: ["AAPL", "TSLA", "NVDA"] },
-            "Dividend stocks": { type: "stocks", symbols: ["KO", "JNJ", "PG"] },
-            "ETFs": { type: "etfs", symbols: ["VOO", "SPY", "SCHD"] },
+            "Growth stocks": { type: "stocks", symbols: ["AAPL", "TSLA", "NVDA", "MSFT", "GOOGL", "AMD", "META", "AMZN"] },
+            "Dividend stocks": { type: "stocks", symbols: ["KO", "JNJ", "PG", "MCD", "PEP", "WMT", "TGT", "HD"] },
+            "ETFs": { type: "etfs", symbols: ["VOO", "SPY", "SCHD", "VTI", "VYM", "IVV", "JEPI", "QQQ"] },
+            "REITs": { type: "stocks", symbols: ["O", "VNQ", "SPG", "PLD", "WPC", "IRM", "EQR", "AVB"] },
             "Cryptocurrencies": { type: "crypto", symbols: ["BTC", "ETH", "SOL"] },
-            "REITs": { type: "stocks", symbols: ["O", "VNQ", "SPG"] }
         };
 
-        // 🔹 Fetch Stocks Based on User Preferences
-        for (const type of preferences.investmentTypes) {
-            if (investmentCategories[type]) {
-                const { type: category, symbols } = investmentCategories[type];
+        // 🔹 Determine portfolio mix
+        const portfolioMix = preferences.portfolioMix || "Balanced stocks & ETFs"; // Default if not selected
+        let stockCount, etfCount;
+        if (portfolioMix === "Mostly stocks") {
+            stockCount = 6; etfCount = 1;
+        } else if (portfolioMix === "Balanced stocks & ETFs") {
+            stockCount = 3; etfCount = 3;
+        } else if (portfolioMix === "Conservative (more ETFs, fewer stocks)") {
+            stockCount = 1; etfCount = 5;
+        }
 
-                if (!selectedPortfolio[category]) {
-                    selectedPortfolio[category] = [];
+        // 🔹 Pick random stocks & ETFs based on selection
+        let chosenStocks = pickRandom(
+            [...investmentCategories["Growth stocks"].symbols, ...investmentCategories["Dividend stocks"].symbols, ...investmentCategories["REITs"].symbols],
+            stockCount
+        );
+        let chosenETFs = pickRandom(investmentCategories["ETFs"].symbols, etfCount);
+
+        // 🔹 Fetch stock data from Alpha Vantage
+        for (const symbol of chosenStocks) {
+            try {
+                const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`;
+                console.log(`Fetching stock: ${symbol}`);
+                const stockResponse = await axios.get(url);
+                if (stockResponse.data && stockResponse.data["Global Quote"]) {
+                    selectedPortfolio.stocks.push(stockResponse.data["Global Quote"]);
                 }
-
-                for (const symbol of symbols) {
-                    try {
-                        const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`;
-                        console.log(`Fetching: ${url}`); // Debug Log
-
-                        const stockResponse = await axios.get(url);
-                        if (!stockResponse.data || !stockResponse.data["Global Quote"]) {
-                            console.warn(`No data found for ${symbol}`);
-                            continue; // Skip if no data
-                        }
-
-                        selectedPortfolio[category].push(stockResponse.data["Global Quote"]);
-                    } catch (fetchError) {
-                        console.error(`Failed to fetch ${symbol}:`, fetchError.message);
-                    }
-                }
+            } catch (error) {
+                console.error(`Failed to fetch stock ${symbol}:`, error.message);
             }
         }
 
-        // 🔹 Ensure only valid data is saved
-        if (Object.keys(selectedPortfolio).length > 0) {
+        // 🔹 Fetch ETF data from Alpha Vantage
+        for (const symbol of chosenETFs) {
+            try {
+                const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`;
+                console.log(`Fetching ETF: ${symbol}`);
+                const etfResponse = await axios.get(url);
+                if (etfResponse.data && etfResponse.data["Global Quote"]) {
+                    selectedPortfolio.etfs.push(etfResponse.data["Global Quote"]);
+                }
+            } catch (error) {
+                console.error(`Failed to fetch ETF ${symbol}:`, error.message);
+            }
+        }
+
+        // 🔹 Save only if there are valid investments
+        if (selectedPortfolio.stocks.length > 0 || selectedPortfolio.etfs.length > 0) {
             const userRef = doc(db, "Users", userId);
             await setDoc(userRef, { generatedPortfolio: selectedPortfolio }, { merge: true });
             res.json(selectedPortfolio);
         } else {
-            throw new Error("No valid investments generated. Check API rate limits.");
+            throw new Error("No valid investments found. Try again.");
         }
 
     } catch (error) {
