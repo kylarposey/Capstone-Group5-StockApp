@@ -5,7 +5,7 @@ const cors = require("cors");
 const { doc, setDoc } = require("firebase/firestore");
 
 const admin = require("firebase-admin");
-const { getFirestore, doc, setDoc } = require("firebase-admin/firestore");
+const { getFirestore } = require("firebase-admin/firestore");
 
 // Initialize Firebase Admin
 if (!admin.apps.length) {
