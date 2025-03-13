@@ -54,35 +54,46 @@ function PortfolioCreation() {
         }
     
         try {
-            const response = await fetch("https://capstone-group5-stockapp.onrender.com/api/generatePortfolio", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${user.accessToken}` // Ensure authentication if needed
-                },
-                body: JSON.stringify({
-                    userId: user.uid,
-                    preferences: formData
-                }),
-                credentials: "include" // Ensure cookies & authentication info are sent
-            });
-    
-            if (!response.ok) {
-                throw new Error("Failed to fetch portfolio data");
-            }
-    
-            const portfolioData = await response.json();
-    
-            // ✅ Save generated portfolio to Firestore
             const userRef = doc(db, "Users", user.uid);
-            await setDoc(userRef, { generatedPortfolio: portfolioData }, { merge: true });
+            const userDoc = await getDoc(userRef);
     
-            console.log("Portfolio saved successfully!", portfolioData);
-            navigate("/");
+            if (userDoc.exists()) {
+                // 🔹 Step 1: Save new preferences (overwrite the old ones)
+                await setDoc(userRef, { portfolio: formData }, { merge: true });
+                console.log("Updated user preferences!");
+    
+                // 🔹 Step 2: Generate new portfolio using API
+                const response = await fetch("https://capstone-group5-stockapp.onrender.com/api/generatePortfolio", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        userId: user.uid,
+                        preferences: formData, // Send the latest preferences
+                    }),
+                });
+    
+                if (!response.ok) {
+                    throw new Error("Failed to generate portfolio");
+                }
+    
+                const generatedPortfolio = await response.json();
+    
+                // 🔹 Step 3: Save newly generated portfolio
+                await setDoc(userRef, { generatedPortfolio }, { merge: true });
+                console.log("Generated portfolio updated successfully!");
+    
+                navigate("/");
+            } else {
+                console.error("User document not found.");
+            }
         } catch (error) {
-            console.error("Error saving portfolio:", error);
+            console.error("Error updating portfolio:", error);
         }
     };
+    
+    
     
 
     return (
