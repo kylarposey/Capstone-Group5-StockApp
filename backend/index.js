@@ -4,6 +4,17 @@ const axios = require("axios");
 const cors = require("cors");
 const { doc, setDoc } = require("firebase/firestore");
 
+const admin = require("firebase-admin");
+const { getFirestore, doc, setDoc } = require("firebase-admin/firestore");
+
+// Initialize Firebase Admin
+if (!admin.apps.length) {
+    admin.initializeApp({
+        credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_ADMIN_CREDENTIALS))
+    });
+}
+
+
 const app = express();
 app.use(express.json()); // Enable JSON body parsing
 const corsOptions = {
@@ -87,7 +98,7 @@ app.post("/api/generatePortfolio", async (req, res) => {
 
         // **Overwrite the generatedPortfolio in Firestore**
         const userRef = doc(db, "Users", userId);
-        await setDoc(userRef, { generatedPortfolio }, { merge: true }); // 🔹 This will fully replace the field
+        await setDoc(userRef, { generatedPortfolio }, { merge: false }); // Fully replace old data
 
         res.json(generatedPortfolio);
     } catch (error) {
@@ -98,4 +109,5 @@ app.post("/api/generatePortfolio", async (req, res) => {
 
 // Start Server
 const PORT = process.env.PORT || 5000;
+const db = getFirestore();
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
