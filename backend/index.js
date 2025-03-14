@@ -62,46 +62,61 @@ app.post("/api/generatePortfolio", async (req, res) => {
 
     try {
         const selectedPortfolio = { stocks: [], etfs: [], crypto: [] };
-
         const includesCrypto = preferences.investmentTypes.includes("Cryptocurrencies");
 
         const investmentCategories = {
             "stocks": {
                 type: "stocks",
                 symbols: [
-                    "AAPL", "TSLA", "NVDA", "MSFT", "GOOGL", "AMD", "META", "AMZN",  
-                    "KO", "JNJ", "PG", "MCD", "PEP", "WMT", "TGT", "HD",  
-                    "O", "VNQ", "SPG", "PLD", "WPC", "IRM", "EQR", "AVB",  
-                    "COIN", "MARA", "RIOT", "HIVE", "SI", "BITF", "HUT",  
-                    "XOM", "CVX", "COP", "PXD", "OXY", "SLB", "EOG",  
-                    "MO", "PM", "BTI", "DEO", "STZ", "BUD", "SAM",  
-                    "LMT", "RTX", "NOC", "GD", "BA", "TXT", "HII",  
-                    "LVS", "WYNN", "MGM", "CZR", "BYD", "DKNG", "PENN"
+                    "AAPL", "TSLA", "NVDA", "MSFT", "GOOGL", "AMD", "META", "AMZN", "SHOP", "SNOW",
+                    "KO", "JNJ", "PG", "MCD", "PEP", "WMT", "TGT", "HD", "VZ", "T",
+                    "O", "VNQ", "SPG", "PLD", "WPC", "IRM", "EQR", "AVB",
+                    "COIN", "MARA", "RIOT", "HIVE", "SI", "BITF", "HUT",
+                    "XOM", "CVX", "COP", "PXD", "OXY", "SLB", "EOG",
+                    "MO", "PM", "BTI", "DEO", "STZ", "BUD",
+                    "LMT", "RTX", "NOC", "GD", "BA", "TXT",
+                    "LVS", "WYNN", "MGM", "CZR", "BYD", "DKNG",
+                    "F", "GM", "RIVN", "LCID", "NIO",
+                    "MRNA", "BNTX", "REGN", "VRTX", "BIIB",
+                    "JPM", "BAC", "WFC", "C", "MS",
+                    "CAT", "DE", "EMR", "HON", "GE"
                 ]
             },
             "etfs": {
                 type: "etfs",
                 symbols: [
-                    "VOO", "SPY", "SCHD", "VTI", "VYM", "IVV", "JEPI", "QQQ",  
-                    "XLE", "VDE", "OIH", "IEO", "AMLP",  
-                    "VICEX", "YOLO",  
-                    "ITA", "XAR", "DFEN", "PPA", "FITE",  
-                    "BJK", "BETZ", "JETS",  
-                    "BITO", "BLOK", "DAPP", "BITQ", "LEGR"
+                    "VOO", "SPY", "IVV", "VTI", "SCHD", "VYM", "DIA",
+                    "QQQ", "ARKK", "ARKW", "VGT", "XLC",
+                    "JEPI", "JEPQ", "DVY", "NOBL", "SPYD",
+                    "XLE", "VDE", "OIH", "IEO",
+                    "ITA", "XAR", "DFEN", "PPA",
+                    "BJK", "BETZ", "JETS",
+                    "BITO", "BLOK", "DAPP",
+                    "XLV", "IBB", "VHT",
+                    "VXUS", "VEA", "EFA",
+                    "VNQ", "SCHH", "XLRE",
+                    "LIT", "TAN", "PBW",
+                    "XLI", "PAVE"
                 ]
             },
             "crypto": {
                 type: "crypto",
-                symbols: ["BTC", "ETH", "SOL"]
+                symbols: ["BTC", "ETH", "SOL", "ADA", "XRP"]
             }
         };
 
+        const riskToleranceFilter = {
+            "Conservative": new Set(["KO", "JNJ", "PG", "MCD", "PEP", "WMT", "VNQ", "SCHD"]),
+            "Moderate": new Set(["XOM", "CVX", "RTX", "NOC", "GD", "DE", "CAT", "HON"]),
+            "Aggressive": new Set(["AAPL", "TSLA", "NVDA", "MSFT", "GOOGL", "COIN", "MARA", "RIOT"])
+        };
+
         const exclusionMap = {
-            "Oil & Gas": ["XOM", "CVX", "COP", "PXD", "OXY", "SLB", "EOG", "XLE", "VDE", "OIH", "IEO", "AMLP"],
-            "Tobacco & Alcohol": ["MO", "PM", "BTI", "DEO", "STZ", "BUD", "SAM", "VICEX", "YOLO"],
-            "Weapons & Defense": ["LMT", "RTX", "NOC", "GD", "BA", "TXT", "HII", "ITA", "XAR", "DFEN", "PPA", "FITE"],
-            "Gambling & Casinos": ["LVS", "WYNN", "MGM", "CZR", "BYD", "DKNG", "PENN", "BJK", "BETZ", "JETS"],
-            "Crypto & Blockchain": ["COIN", "MARA", "RIOT", "HIVE", "SI", "BITF", "HUT", "BITO", "BLOK", "DAPP", "BITQ", "LEGR"]
+            "Oil & Gas": ["XOM", "CVX", "COP", "PXD", "OXY", "SLB", "EOG"],
+            "Tobacco & Alcohol": ["MO", "PM", "BTI", "DEO", "STZ"],
+            "Weapons & Defense": ["LMT", "RTX", "NOC", "GD"],
+            "Gambling & Casinos": ["LVS", "WYNN", "MGM", "CZR"],
+            "Crypto & Blockchain": ["COIN", "MARA", "RIOT", "BITO", "BLOK"]
         };
 
         let excludedSymbols = new Set();
@@ -115,7 +130,10 @@ app.post("/api/generatePortfolio", async (req, res) => {
 
         let availableStocks = investmentCategories["stocks"].symbols.filter(symbol => !excludedSymbols.has(symbol));
         let availableETFs = investmentCategories["etfs"].symbols.filter(symbol => !excludedSymbols.has(symbol));
-        let availableCrypto = includesCrypto ? investmentCategories["crypto"].symbols : [];
+
+        if (preferences.riskTolerance) {
+            availableStocks = availableStocks.filter(stock => riskToleranceFilter[preferences.riskTolerance].has(stock));
+        }
 
         const portfolioMix = preferences.portfolioMix || "Balanced stocks & ETFs";
         let stockCount, etfCount;
@@ -127,42 +145,13 @@ app.post("/api/generatePortfolio", async (req, res) => {
             stockCount = 1; etfCount = 5;
         }
 
-        let chosenStocks = pickRandom(availableStocks, stockCount);
-        let chosenETFs = pickRandom(availableETFs, etfCount);
-        let chosenCrypto = includesCrypto ? pickRandom(availableCrypto, 2) : [];
+        selectedPortfolio.stocks = pickRandom(availableStocks, stockCount);
+        selectedPortfolio.etfs = pickRandom(availableETFs, etfCount);
+        selectedPortfolio.crypto = includesCrypto ? pickRandom(investmentCategories["crypto"].symbols, 2) : [];
 
-        for (const symbol of chosenStocks) {
-            try {
-                const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`;
-                console.log(`Fetching stock: ${symbol}`);
-                const stockResponse = await axios.get(url);
-                if (stockResponse.data && stockResponse.data["Global Quote"]) {
-                    selectedPortfolio.stocks.push(stockResponse.data["Global Quote"]);
-                }
-            } catch (error) {
-                console.error(`Failed to fetch stock ${symbol}:`, error.message);
-            }
-        }
+        await setDoc(doc(db, "Users", userId), { generatedPortfolio: selectedPortfolio }, { merge: true });
 
-        for (const symbol of chosenETFs) {
-            try {
-                const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`;
-                console.log(`Fetching ETF: ${symbol}`);
-                const etfResponse = await axios.get(url);
-                if (etfResponse.data && etfResponse.data["Global Quote"]) {
-                    selectedPortfolio.etfs.push(etfResponse.data["Global Quote"]);
-                }
-            } catch (error) {
-                console.error(`Failed to fetch ETF ${symbol}:`, error.message);
-            }
-        }
-
-        selectedPortfolio.crypto = includesCrypto ? chosenCrypto : [];
-
-        const userRef = doc(db, "Users", userId);
-        await setDoc(userRef, { generatedPortfolio: selectedPortfolio }, { merge: true });
         res.json(selectedPortfolio);
-
     } catch (error) {
         console.error("Error generating portfolio:", error.message);
         res.status(500).json({ error: "Failed to generate portfolio", details: error.message });
