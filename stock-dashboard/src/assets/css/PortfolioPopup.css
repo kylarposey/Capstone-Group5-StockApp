@@ -1,0 +1,83 @@
+/* ============================== */
+/*       MOVABLE PORTFOLIO POPUP  */
+/* ============================== */
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #f5e6d8;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    z-index: 1000;
+    border-radius: 12px;
+    width: 300px;
+    text-align: center;
+    color: black;
+    cursor: grab;
+    font-family: "Arial", sans-serif;
+}
+
+.popup-header {
+    width: 100%;
+    padding: 10px;
+    cursor: grab;
+    background: #f8f8f8;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    font-weight: bold;
+    font-size: 18px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.popup .close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #333;
+}
+
+.popup .close:hover {
+    color: red;
+}
+
+.popup h3 {
+    margin: 12px 0 6px 0;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 5px;
+}
+
+.portfolio-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.portfolio-list li {
+    background: #f5f5f5;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #222;
+    transition: background 0.3s ease;
+}
+
+.portfolio-list li:hover {
+    background: #e0e0e0;
+}
+
+@media (max-width: 600px) {
+    .popup {
+        width: 90%;
+    }
+}
