@@ -5,7 +5,6 @@ const cors = require("cors");
 const { initializeApp } = require("firebase/app");
 const { getFirestore, doc, setDoc } = require("firebase/firestore");
 
-// 🔹 Firebase Configuration
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
     authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -47,7 +46,7 @@ app.get("/api/stock", async (req, res) => {
     }
 });
 
-app.use(express.json()); // Enable JSON parsing
+app.use(express.json());
 
 const pickRandom = (array, count) => {
     let shuffled = [...array].sort(() => 0.5 - Math.random());
@@ -62,20 +61,63 @@ app.post("/api/generatePortfolio", async (req, res) => {
     }
 
     try {
-        // 🔹 Initialize portfolio structure
-        const selectedPortfolio = { stocks: [], etfs: [] };
+        const selectedPortfolio = { stocks: [], etfs: [], crypto: [] };
 
-        // 🔹 Expanded Investment Categories
+        const includesCrypto = preferences.investmentTypes.includes("Cryptocurrencies");
+
         const investmentCategories = {
-            "Growth stocks": { type: "stocks", symbols: ["AAPL", "TSLA", "NVDA", "MSFT", "GOOGL", "AMD", "META", "AMZN"] },
-            "Dividend stocks": { type: "stocks", symbols: ["KO", "JNJ", "PG", "MCD", "PEP", "WMT", "TGT", "HD"] },
-            "ETFs": { type: "etfs", symbols: ["VOO", "SPY", "SCHD", "VTI", "VYM", "IVV", "JEPI", "QQQ"] },
-            "REITs": { type: "stocks", symbols: ["O", "VNQ", "SPG", "PLD", "WPC", "IRM", "EQR", "AVB"] },
-            "Cryptocurrencies": { type: "crypto", symbols: ["BTC", "ETH", "SOL"] },
+            "stocks": {
+                type: "stocks",
+                symbols: [
+                    "AAPL", "TSLA", "NVDA", "MSFT", "GOOGL", "AMD", "META", "AMZN",  
+                    "KO", "JNJ", "PG", "MCD", "PEP", "WMT", "TGT", "HD",  
+                    "O", "VNQ", "SPG", "PLD", "WPC", "IRM", "EQR", "AVB",  
+                    "COIN", "MARA", "RIOT", "HIVE", "SI", "BITF", "HUT",  
+                    "XOM", "CVX", "COP", "PXD", "OXY", "SLB", "EOG",  
+                    "MO", "PM", "BTI", "DEO", "STZ", "BUD", "SAM",  
+                    "LMT", "RTX", "NOC", "GD", "BA", "TXT", "HII",  
+                    "LVS", "WYNN", "MGM", "CZR", "BYD", "DKNG", "PENN"
+                ]
+            },
+            "etfs": {
+                type: "etfs",
+                symbols: [
+                    "VOO", "SPY", "SCHD", "VTI", "VYM", "IVV", "JEPI", "QQQ",  
+                    "XLE", "VDE", "OIH", "IEO", "AMLP",  
+                    "VICEX", "YOLO",  
+                    "ITA", "XAR", "DFEN", "PPA", "FITE",  
+                    "BJK", "BETZ", "JETS",  
+                    "BITO", "BLOK", "DAPP", "BITQ", "LEGR"
+                ]
+            },
+            "crypto": {
+                type: "crypto",
+                symbols: ["BTC", "ETH", "SOL"]
+            }
         };
 
-        // 🔹 Determine portfolio mix
-        const portfolioMix = preferences.portfolioMix || "Balanced stocks & ETFs"; // Default if not selected
+        const exclusionMap = {
+            "Oil & Gas": ["XOM", "CVX", "COP", "PXD", "OXY", "SLB", "EOG", "XLE", "VDE", "OIH", "IEO", "AMLP"],
+            "Tobacco & Alcohol": ["MO", "PM", "BTI", "DEO", "STZ", "BUD", "SAM", "VICEX", "YOLO"],
+            "Weapons & Defense": ["LMT", "RTX", "NOC", "GD", "BA", "TXT", "HII", "ITA", "XAR", "DFEN", "PPA", "FITE"],
+            "Gambling & Casinos": ["LVS", "WYNN", "MGM", "CZR", "BYD", "DKNG", "PENN", "BJK", "BETZ", "JETS"],
+            "Crypto & Blockchain": ["COIN", "MARA", "RIOT", "HIVE", "SI", "BITF", "HUT", "BITO", "BLOK", "DAPP", "BITQ", "LEGR"]
+        };
+
+        let excludedSymbols = new Set();
+        if (preferences.excludeIndustries) {
+            for (let industry of preferences.excludeIndustries) {
+                if (exclusionMap[industry]) {
+                    exclusionMap[industry].forEach(symbol => excludedSymbols.add(symbol));
+                }
+            }
+        }
+
+        let availableStocks = investmentCategories["stocks"].symbols.filter(symbol => !excludedSymbols.has(symbol));
+        let availableETFs = investmentCategories["etfs"].symbols.filter(symbol => !excludedSymbols.has(symbol));
+        let availableCrypto = includesCrypto ? investmentCategories["crypto"].symbols : [];
+
+        const portfolioMix = preferences.portfolioMix || "Balanced stocks & ETFs";
         let stockCount, etfCount;
         if (portfolioMix === "Mostly stocks") {
             stockCount = 6; etfCount = 1;
@@ -85,14 +127,10 @@ app.post("/api/generatePortfolio", async (req, res) => {
             stockCount = 1; etfCount = 5;
         }
 
-        // 🔹 Pick random stocks & ETFs based on selection
-        let chosenStocks = pickRandom(
-            [...investmentCategories["Growth stocks"].symbols, ...investmentCategories["Dividend stocks"].symbols, ...investmentCategories["REITs"].symbols],
-            stockCount
-        );
-        let chosenETFs = pickRandom(investmentCategories["ETFs"].symbols, etfCount);
+        let chosenStocks = pickRandom(availableStocks, stockCount);
+        let chosenETFs = pickRandom(availableETFs, etfCount);
+        let chosenCrypto = includesCrypto ? pickRandom(availableCrypto, 2) : [];
 
-        // 🔹 Fetch stock data from Alpha Vantage
         for (const symbol of chosenStocks) {
             try {
                 const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`;
@@ -106,7 +144,6 @@ app.post("/api/generatePortfolio", async (req, res) => {
             }
         }
 
-        // 🔹 Fetch ETF data from Alpha Vantage
         for (const symbol of chosenETFs) {
             try {
                 const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`;
@@ -120,21 +157,15 @@ app.post("/api/generatePortfolio", async (req, res) => {
             }
         }
 
-        // 🔹 Save only if there are valid investments
-        if (selectedPortfolio.stocks.length > 0 || selectedPortfolio.etfs.length > 0) {
-            const userRef = doc(db, "Users", userId);
-            await setDoc(userRef, { generatedPortfolio: selectedPortfolio }, { merge: true });
-            res.json(selectedPortfolio);
-        } else {
-            throw new Error("No valid investments found. Try again.");
-        }
+        selectedPortfolio.crypto = includesCrypto ? chosenCrypto : [];
+
+        const userRef = doc(db, "Users", userId);
+        await setDoc(userRef, { generatedPortfolio: selectedPortfolio }, { merge: true });
+        res.json(selectedPortfolio);
 
     } catch (error) {
         console.error("Error generating portfolio:", error.message);
         res.status(500).json({ error: "Failed to generate portfolio", details: error.message });
-
-        const userRef = doc(db, "Users", userId);
-        await setDoc(userRef, { generatedPortfolio: { error: error.message } }, { merge: true });
     }
 });
 
