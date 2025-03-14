@@ -68,47 +68,111 @@ app.post("/api/generatePortfolio", async (req, res) => {
             "stocks": {
                 type: "stocks",
                 symbols: [
+                    // 📈 Growth Stocks (Aggressive)
                     "AAPL", "TSLA", "NVDA", "MSFT", "GOOGL", "AMD", "META", "AMZN", "SHOP", "SNOW",
-                    "KO", "JNJ", "PG", "MCD", "PEP", "WMT", "TGT", "HD", "VZ", "T",
-                    "O", "VNQ", "SPG", "PLD", "WPC", "IRM", "EQR", "AVB",
-                    "COIN", "MARA", "RIOT", "HIVE", "SI", "BITF", "HUT",
-                    "XOM", "CVX", "COP", "PXD", "OXY", "SLB", "EOG",
-                    "MO", "PM", "BTI", "DEO", "STZ", "BUD",
-                    "LMT", "RTX", "NOC", "GD", "BA", "TXT",
-                    "LVS", "WYNN", "MGM", "CZR", "BYD", "DKNG",
-                    "F", "GM", "RIVN", "LCID", "NIO",
-                    "MRNA", "BNTX", "REGN", "VRTX", "BIIB",
-                    "JPM", "BAC", "WFC", "C", "MS",
-                    "CAT", "DE", "EMR", "HON", "GE"
+                    "UBER", "RBLX", "SQ", "NET", "CRWD", "DDOG", "MDB", "ZS", "DOCU", "ASAN",
+                    "COIN", "MARA", "RIOT", "HIVE", "SI", "BITF", "HUT", "GBTC", "ETHE", "MSTR",
+        
+                    // 💰 Dividend Stocks (Conservative)
+                    "KO", "JNJ", "PG", "MCD", "PEP", "WMT", "TGT", "HD", "VZ", "T", "D", "SO", "DUK",
+                    "XEL", "AEP", "ED", "GIS", "KMB", "CL", "COST", "LOW", "USB", "PNC", "TFC", "LMT", "RTX",
+        
+                    // 🏠 REITs (Moderate/Conservative)
+                    "O", "VNQ", "SPG", "PLD", "WPC", "IRM", "EQR", "AVB", "MAA", "PEAK", "BXP", "SLG",
+                    "CPT", "ARE", "MPW", "VICI", "STAG", "EXR", "PSA", "CUBE",
+        
+                    // 🛢 Oil & Gas (Moderate/Conservative)
+                    "XOM", "CVX", "COP", "PXD", "OXY", "SLB", "EOG", "HES", "MPC", "PSX", "VLO", "DVN", "FANG",
+        
+                    // 🚬 Tobacco & Alcohol (Conservative/Moderate)
+                    "MO", "PM", "BTI", "DEO", "STZ", "BUD", "SAM", "CCU", "TAP", "BF.B",
+        
+                    // 🛡 Weapons & Defense (Moderate/Conservative)
+                    "LMT", "RTX", "NOC", "GD", "BA", "TXT", "HII", "CW", "AXON", "LHX", "HEI",
+        
+                    // 🎰 Gambling & Casinos (Moderate/Aggressive)
+                    "LVS", "WYNN", "MGM", "CZR", "BYD", "DKNG", "PENN", "BALY", "RSI", "MCRI",
+        
+                    // 🚗 Automakers & EV (Aggressive/Moderate)
+                    "F", "GM", "RIVN", "LCID", "NIO", "XPEV", "FSR", "TSLA", "STLA",
+        
+                    // 🔬 Biotech & Pharma (Moderate/Aggressive)
+                    "MRNA", "BNTX", "REGN", "VRTX", "BIIB", "LLY", "PFE", "ABBV", "GILD", "BMY", "AMGN",
+        
+                    // 🏦 Financials & Banks (Conservative/Moderate)
+                    "JPM", "BAC", "WFC", "C", "MS", "GS", "USB", "PNC", "TFC", "SCHW", "AMP", "RY", "TD", "BNS",
+        
+                    // 🏛️ Infrastructure & Industrials (Moderate)
+                    "CAT", "DE", "EMR", "HON", "GE", "NUE", "DOW", "X", "FCX", "LIN", "ETN", "CMI"
                 ]
             },
+        
             "etfs": {
                 type: "etfs",
                 symbols: [
-                    "VOO", "SPY", "IVV", "VTI", "SCHD", "VYM", "DIA",
-                    "QQQ", "ARKK", "ARKW", "VGT", "XLC",
-                    "JEPI", "JEPQ", "DVY", "NOBL", "SPYD",
-                    "XLE", "VDE", "OIH", "IEO",
-                    "ITA", "XAR", "DFEN", "PPA",
+                    // 🏛️ Large-Cap ETFs (Conservative/Moderate)
+                    "VOO", "SPY", "IVV", "VTI", "SCHD", "VYM", "DIA", "VIG", "FNDX",
+        
+                    // 📊 Growth & Tech ETFs (Aggressive/Moderate)
+                    "QQQ", "ARKK", "ARKW", "VGT", "XLC", "FTEC", "XLK", "IYW", "FDN",
+        
+                    // 💰 Dividend & Income ETFs (Conservative)
+                    "JEPI", "JEPQ", "DVY", "NOBL", "VYM", "SPYD", "SDY", "HDV", "SCHY",
+        
+                    // 🛢 Oil & Gas ETFs (Conservative/Moderate)
+                    "XLE", "VDE", "OIH", "IEO", "AMLP", "USO", "BNO",
+        
+                    // 🚬 Vice ETFs (Moderate)
+                    "VICEX", "YOLO",
+        
+                    // 🛡 Defense ETFs (Moderate/Conservative)
+                    "ITA", "XAR", "DFEN", "PPA", "FITE",
+        
+                    // 🎰 Gambling ETFs (Moderate/Aggressive)
                     "BJK", "BETZ", "JETS",
-                    "BITO", "BLOK", "DAPP",
-                    "XLV", "IBB", "VHT",
-                    "VXUS", "VEA", "EFA",
-                    "VNQ", "SCHH", "XLRE",
-                    "LIT", "TAN", "PBW",
-                    "XLI", "PAVE"
+        
+                    // 💎 Crypto & Blockchain ETFs (Aggressive)
+                    "BITO", "BLOK", "DAPP", "BITQ", "LEGR", "GBTC", "ETHE", "WGMI",
+        
+                    // 🔬 Healthcare & Biotech ETFs (Moderate)
+                    "XLV", "IBB", "VHT", "XBI", "ARKG",
+        
+                    // 🌍 International & Emerging Markets (Moderate)
+                    "VXUS", "VEA", "EFA", "EEM", "VWO", "EWZ", "FXI", "INDA",
+        
+                    // 🏠 REITs & Real Estate ETFs (Conservative)
+                    "VNQ", "SCHH", "XLRE", "IYR", "REZ", "FREL", "RWR", "IYR",
+        
+                    // 🚗 EV & Renewable Energy ETFs (Aggressive/Moderate)
+                    "LIT", "TAN", "PBW", "ICLN", "QCLN",
+        
+                    // 🏗️ Industrials & Infrastructure ETFs (Moderate)
+                    "XLI", "PAVE", "VIS", "IGE", "IFRA"
                 ]
             },
+        
             "crypto": {
                 type: "crypto",
-                symbols: ["BTC", "ETH", "SOL", "ADA", "XRP"]
+                symbols: ["BTC", "ETH", "SOL", "ADA", "XRP", "DOT", "MATIC", "AVAX", "LTC", "DOGE", "UNI", "LINK"]
             }
         };
+        
 
         const riskToleranceFilter = {
-            "Conservative": new Set(["KO", "JNJ", "PG", "MCD", "PEP", "WMT", "VNQ", "SCHD"]),
-            "Moderate": new Set(["XOM", "CVX", "RTX", "NOC", "GD", "DE", "CAT", "HON"]),
-            "Aggressive": new Set(["AAPL", "TSLA", "NVDA", "MSFT", "GOOGL", "COIN", "MARA", "RIOT"])
+            "Conservative": new Set([
+                "KO", "JNJ", "PG", "MCD", "PEP", "WMT", "VNQ", "SCHD", "D", "SO", "DUK", "XEL", "AEP", "ED",
+                "USB", "PNC", "TFC", "LMT", "RTX", "NOBL", "VYM", "SPYD", "XLV", "VNQ", "XLRE"
+            ]),
+        
+            "Moderate": new Set([
+                "XOM", "CVX", "RTX", "NOC", "GD", "DE", "CAT", "HON", "VICI", "ARE", "BMY", "GS", "MS", "JETS",
+                "ITA", "XAR", "DFEN", "PPA", "XLI", "PAVE", "IGE", "IBB", "VHT", "VXUS", "VEA", "EFA"
+            ]),
+        
+            "Aggressive": new Set([
+                "AAPL", "TSLA", "NVDA", "MSFT", "GOOGL", "COIN", "MARA", "RIOT", "SHOP", "SNOW", "RBLX", "SQ",
+                "ARKK", "ARKW", "VGT", "XLK", "LIT", "TAN", "PBW", "ICLN", "BITO", "BLOK", "DAPP", "XLC"
+            ])
         };
 
         const exclusionMap = {
