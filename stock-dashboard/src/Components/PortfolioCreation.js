@@ -23,17 +23,15 @@ function PortfolioCreation() {
             if (currentUser) {
                 setUser(currentUser);
             } else {
-                navigate("/login"); // Redirect if not logged in
+                navigate("/login");
             }
         });
     }, [navigate]);
 
-    // Handle Select Input Changes
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    // Handle Checkbox Changes
     const handleCheckboxChange = (e, field) => {
         const { value, checked } = e.target;
         setFormData((prevData) => ({
@@ -44,7 +42,6 @@ function PortfolioCreation() {
         }));
     };
 
-    // 🔹 Save Portfolio to Firestore (Overwrites old portfolio)
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!user) {
@@ -57,10 +54,8 @@ function PortfolioCreation() {
             const userDoc = await getDoc(userRef);
     
             if (userDoc.exists()) {
-                // Save preferences first
                 await setDoc(userRef, { portfolio: formData }, { merge: true });
     
-                // Call backend to generate categorized portfolio
                 const response = await fetch("https://capstone-group5-stockapp.onrender.com/api/generatePortfolio", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -69,7 +64,6 @@ function PortfolioCreation() {
     
                 const generatedPortfolio = await response.json();
     
-                // Ensure it correctly updates in Firestore
                 await setDoc(userRef, { generatedPortfolio }, { merge: true });
     
                 console.log("Portfolio saved successfully with correct categorization!");
@@ -83,11 +77,6 @@ function PortfolioCreation() {
         }
     };
     
-    
-    
-    
-    
-
     return (
         <div className="portfolio-container">
             <h2 className="portfolio-title">Create Your Investment Portfolio</h2>
@@ -151,24 +140,26 @@ function PortfolioCreation() {
                     </select>
                 </div>
 
-                {/* Fund Type */}
+                {/* Market Reaction */}
                 <div className="question-group">
-                    <label className="question-label">Do you prefer actively managed or passive index funds?</label>
-                    <select name="fundPreference" className="input-field" onChange={handleChange} required>
+                    <label className="question-label">How do you react when the market drops significantly?</label>
+                    <select name="marketReaction" className="input-field" onChange={handleChange} required>
                         <option value="">Select...</option>
-                        <option value="Actively Managed">Actively Managed</option>
-                        <option value="Passive Index Funds">Passive Index Funds</option>
+                        <option value="Buy more">I buy more (buy the dip)</option>
+                        <option value="Hold">I hold and wait it out</option>
+                        <option value="Nervous">I get nervous and consider selling</option>
+                        <option value="Sell quickly">I sell quickly to protect my capital</option>
                     </select>
                 </div>
 
-                {/* Stock Size */}
+                {/* Investment Involvement */}
                 <div className="question-group">
-                    <label className="question-label">What size stocks do you prefer?</label>
-                    <select name="stockSize" className="input-field" onChange={handleChange} required>
+                    <label className="question-label">How involved do you want to be in managing your investments?</label>
+                    <select name="investmentInvolvement" className="input-field" onChange={handleChange} required>
                         <option value="">Select...</option>
-                        <option value="Large-cap">Large-cap (Stable, well-established companies)</option>
-                        <option value="Mid-cap">Mid-cap (Growing companies)</option>
-                        <option value="Small-cap">Small-cap (High risk, high reward)</option>
+                        <option value="Hands-off">I prefer a hands-off approach (set and forget)</option>
+                        <option value="Monitor">I like to monitor and adjust occasionally</option>
+                        <option value="Active">I actively research and trade frequently</option>
                     </select>
                 </div>
 

@@ -157,18 +157,17 @@ app.post("/api/generatePortfolio", async (req, res) => {
             }
         };
         
-
         const riskToleranceFilter = {
             "Conservative": new Set([
                 "KO", "JNJ", "PG", "MCD", "PEP", "WMT", "VNQ", "SCHD", "D", "SO", "DUK", "XEL", "AEP", "ED",
                 "USB", "PNC", "TFC", "LMT", "RTX", "NOBL", "VYM", "SPYD", "XLV", "VNQ", "XLRE"
             ]),
-        
+    
             "Moderate": new Set([
                 "XOM", "CVX", "RTX", "NOC", "GD", "DE", "CAT", "HON", "VICI", "ARE", "BMY", "GS", "MS", "JETS",
                 "ITA", "XAR", "DFEN", "PPA", "XLI", "PAVE", "IGE", "IBB", "VHT", "VXUS", "VEA", "EFA"
             ]),
-        
+    
             "Aggressive": new Set([
                 "AAPL", "TSLA", "NVDA", "MSFT", "GOOGL", "COIN", "MARA", "RIOT", "SHOP", "SNOW", "RBLX", "SQ",
                 "ARKK", "ARKW", "VGT", "XLK", "LIT", "TAN", "PBW", "ICLN", "BITO", "BLOK", "DAPP", "XLC"
