@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import "../assets/css/style.css"; 
+import "../assets/css/style.css";
 
 function Home() {
     const [ticker, setTicker] = useState("");
@@ -9,19 +11,33 @@ function Home() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [showPopup, setShowPopup] = useState(false);
-    const [position, setPosition] = useState({ x: 50, y: 50 });
+    const [user, setUser] = useState(null);
+    const navigate = useNavigate();
 
-    // Fetch stock data from the backend
+    const [position, setPosition] = useState({ x: 200, y: 150 });
+    const [dragging, setDragging] = useState(false);
+    const [offset, setOffset] = useState({ x: 0, y: 0 });
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            setUser(currentUser);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
     const fetchStockPrice = async () => {
         setLoading(true);
         setError("");
         setStockData(null);
         setShowPopup(false);
 
+        const API_URL = process.env.NODE_ENV === "development"
+            ? "http://localhost:5000/api/stock"
+            : "https://capstone-group5-stockapp.onrender.com/api/stock";
+
         try {
-            const response = await axios.get(
-                `https://capstone-group5-stockapp.onrender.com/api/stock?symbol=${ticker}`
-            );
+            const response = await axios.get(`${API_URL}?symbol=${ticker}`);
 
             const data = response.data;
             if (!data["Global Quote"] || !data["Global Quote"]["01. symbol"]) {
@@ -35,7 +51,6 @@ function Home() {
                 price: data["Global Quote"]["05. price"] || "N/A",
                 change: data["Global Quote"]["09. change"] || "N/A",
                 changePercent: data["Global Quote"]["10. change percent"] || "N/A",
-                timestamp: new Date().toISOString(),
             };
 
             setStockData(stockInfo);
@@ -47,6 +62,47 @@ function Home() {
             setLoading(false);
         }
     };
+
+    const handlePortfolioClick = () => {
+        if (user) {
+            navigate("/portfolioCreation");
+        }
+    };
+
+    const handleMouseDown = (e) => {
+        setDragging(true);
+        setOffset({
+            x: e.clientX - position.x,
+            y: e.clientY - position.y,
+        });
+    };
+
+    const handleMouseMove = (e) => {
+        if (dragging) {
+            setPosition({
+                x: e.clientX - offset.x,
+                y: e.clientY - offset.y,
+            });
+        }
+    };
+
+    const handleMouseUp = () => {
+        setDragging(false);
+    };
+
+    useEffect(() => {
+        if (dragging) {
+            document.addEventListener("mousemove", handleMouseMove);
+            document.addEventListener("mouseup", handleMouseUp);
+        } else {
+            document.removeEventListener("mousemove", handleMouseMove);
+            document.removeEventListener("mouseup", handleMouseUp);
+        }
+        return () => {
+            document.removeEventListener("mousemove", handleMouseMove);
+            document.removeEventListener("mouseup", handleMouseUp);
+        };
+    }, [dragging]);
 
     return (
         <div className="home-container">
@@ -79,10 +135,14 @@ function Home() {
                 {/* Portfolio Management Card */}
                 <div className="card card-green">
                     <h2>Portfolio</h2>
-                    <p>Manage and analyze your investments.</p>
-                    <Link to="/portfolio" className="card-button">
-                        View Portfolio
-                    </Link>
+                    <p>Create and Manage your investments.</p>
+                    <button 
+                        onClick={handlePortfolioClick} 
+                        className={`card-button ${!user ? "disabled-button" : ""}`} 
+                        disabled={!user}
+                    >
+                        Generate Portfolio
+                    </button>
                 </div>
 
                 {/* Market Trends Card */}
@@ -95,12 +155,18 @@ function Home() {
                 </div>
             </div>
 
-            {/* Movable Pop-up for Stock Data */}
+            {/* ✨ Movable Pop-up for Stock Data ✨ */}
             {showPopup && stockData && (
-                <div className="popup" style={{ left: `${position.x}px`, top: `${position.y}px` }}>
-                    <div className="popup-content">
+                <div
+                    className="popup draggable"
+                    style={{ left: `${position.x}px`, top: `${position.y}px` }}
+                    onMouseDown={handleMouseDown}
+                >
+                    <div className="popup-header">
+                        <span className="popup-title">{stockData.ticker}</span>
                         <span className="close" onClick={() => setShowPopup(false)}>&times;</span>
-                        <h2>{stockData.ticker}</h2>
+                    </div>
+                    <div className="popup-content">
                         <p>Current Price: ${stockData.price}</p>
                         <p>Change: {stockData.change} ({stockData.changePercent})</p>
                     </div>
