@@ -19,7 +19,7 @@ const db = getFirestore(firebaseApp);
 
 const app = express();
 app.use(cors({
-    origin: "*",
+    origin: "*", 
     methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Content-Type"]
 }));
@@ -225,35 +225,6 @@ app.post("/api/generatePortfolio", async (req, res) => {
         selectedPortfolio.crypto = includesCrypto ? pickRandom(investmentCategories["crypto"].symbols, 2) : [];
         
 
-        await setDoc(doc(db, "Users", userId), { generatedPortfolio: selectedPortfolio }, { merge: true });
-
-        res.json(selectedPortfolio);
-    } catch (error) {
-        console.error("Error generating portfolio:", error.message);
-        res.status(500).json({ error: "Failed to generate portfolio", details: error.message });
-    }
-});
-
-app.get("/api/fetchPortfolioData", async (req, res) => {
-    const { userId } = req.query;
-    if (!userId) {
-        return res.status(400).json({ error: "User ID is required" });
-    }
-
-    try {
-        const userDocRef = doc(db, "Users", userId);
-        const userDoc = await getDoc(userDocRef);
-
-        if (!userDoc.exists()) {
-            return res.status(404).json({ error: "User not found in Firestore." });
-        }
-
-        let portfolio = userDoc.data().generatedPortfolio;
-        if (!portfolio) {
-            return res.status(404).json({ error: "No portfolio found for this user." });
-        }
-
-        // Fetch stock market data for each stock and ETF
         async function fetchStockChange(symbol) {
             try {
                 const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`;
@@ -269,18 +240,18 @@ app.get("/api/fetchPortfolioData", async (req, res) => {
             }
         }
 
-        // Check if `stocks` and `etfs` exist before fetching
-        const updatedStocks = portfolio.stocks ? await Promise.all(portfolio.stocks.map(fetchStockChange)) : [];
-        const updatedETFs = portfolio.etfs ? await Promise.all(portfolio.etfs.map(fetchStockChange)) : [];
+        // ✅ Step 5: Fetch Price Changes for Selected Stocks & ETFs
+        const updatedStocks = await Promise.all(selectedPortfolio.stocks.map(fetchStockChange));
+        const updatedETFs = await Promise.all(selectedPortfolio.etfs.map(fetchStockChange));
 
-        // Update Firebase with new data
-        const updatedPortfolio = { ...portfolio, stocks: updatedStocks, etfs: updatedETFs };
-        await setDoc(userDocRef, { generatedPortfolio: updatedPortfolio }, { merge: true });
+        // ✅ Step 6: Store Final Portfolio with Price Data in Firestore
+        const finalPortfolio = { ...selectedPortfolio, stocks: updatedStocks, etfs: updatedETFs };
+        await setDoc(doc(db, "Users", userId), { generatedPortfolio: finalPortfolio }, { merge: true });
 
-        res.json(updatedPortfolio);
+        res.json(selectedPortfolio);
     } catch (error) {
-        console.error("🔥 Error fetching portfolio data:", error.message);
-        res.status(500).json({ error: "Failed to fetch portfolio data", details: error.message });
+        console.error("Error generating portfolio:", error.message);
+        res.status(500).json({ error: "Failed to generate portfolio", details: error.message });
     }
 });
 
