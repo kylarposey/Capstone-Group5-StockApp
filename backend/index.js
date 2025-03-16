@@ -18,11 +18,10 @@ const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
 
 const app = express();
-app.use(cors({
-    origin: ["http://localhost:3000", "https://group5-capstone-project.web.app"],
-    methods: ["GET", "POST"],
-    allowedHeaders: ["Content-Type"]
-}));
+app.use(cors());
+app.options("*", cors()); // Allow preflight requests
+
+
 
 const API_KEY = process.env.REACT_APP_ALPHA_VANTAGE_API_KEY;
 
