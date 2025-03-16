@@ -245,12 +245,12 @@ app.get("/api/fetchPortfolioData", async (req, res) => {
         const userDoc = await getDoc(userDocRef);
 
         if (!userDoc.exists()) {
-            return res.status(404).json({ error: "User not found" });
+            return res.status(404).json({ error: "User not found in Firestore." });
         }
 
         let portfolio = userDoc.data().generatedPortfolio;
         if (!portfolio) {
-            return res.status(404).json({ error: "No portfolio found for this user" });
+            return res.status(404).json({ error: "No portfolio found for this user." });
         }
 
         // Fetch stock market data for each stock and ETF
@@ -269,16 +269,17 @@ app.get("/api/fetchPortfolioData", async (req, res) => {
             }
         }
 
-        const updatedStocks = await Promise.all(portfolio.stocks.map(fetchStockChange));
-        const updatedETFs = await Promise.all(portfolio.etfs.map(fetchStockChange));
+        // Check if `stocks` and `etfs` exist before fetching
+        const updatedStocks = portfolio.stocks ? await Promise.all(portfolio.stocks.map(fetchStockChange)) : [];
+        const updatedETFs = portfolio.etfs ? await Promise.all(portfolio.etfs.map(fetchStockChange)) : [];
 
-        // Update Firebase with market data
+        // Update Firebase with new data
         const updatedPortfolio = { ...portfolio, stocks: updatedStocks, etfs: updatedETFs };
         await setDoc(userDocRef, { generatedPortfolio: updatedPortfolio }, { merge: true });
 
         res.json(updatedPortfolio);
     } catch (error) {
-        console.error("Error fetching portfolio data:", error.message);
+        console.error("🔥 Error fetching portfolio data:", error.message);
         res.status(500).json({ error: "Failed to fetch portfolio data", details: error.message });
     }
 });
