@@ -106,52 +106,51 @@ function Header() {
                         <span className="close" onClick={() => setShowPopup(false)}>&times;</span>
                     </div>
                     <ul className="portfolio-list">
-    {/* Stocks */}
-    {portfolio.stocks && portfolio.stocks.length > 0 && (
-        <>
-            <h3>Stocks</h3>
-            {portfolio.stocks.map((stock, index) => (
-                <li key={index} className="portfolio-item">
-                    <span>{stock.symbol}</span>
-                    <span className={`change-percent ${parseFloat(stock.changePercent) >= 0 ? "green" : "red"}`}>
-                        {stock.changePercent}
-                    </span>
-                </li>
-            ))}
-        </>
-    )}
+                        {/* Stocks */}
+                        {portfolio.stocks && portfolio.stocks.length > 0 && (
+                            <>
+                                <h3>Stocks</h3>
+                                {portfolio.stocks.map((stock, index) => (
+                                    <li key={index} className="portfolio-item">
+                                        <span>{stock.symbol}</span>
+                                        <span className={`change-percent ${parseFloat(stock.changePercent) >= 0 ? "green" : "red"}`}>
+                                            {stock.changePercent}
+                                        </span>
+                                    </li>
+                                ))}
+                            </>
+                        )}
 
-    {/* ETFs */}
-    {portfolio.etfs && portfolio.etfs.length > 0 && (
-        <>
-            <h3>ETFs</h3>
-            {portfolio.etfs.map((etf, index) => (
-                <li key={index} className="portfolio-item">
-                    <span>{etf.symbol}</span>
-                    <span className={`change-percent ${parseFloat(etf.changePercent) >= 0 ? "green" : "red"}`}>
-                        {etf.changePercent}
-                    </span>
-                </li>
-            ))}
-        </>
-    )}
+                        {/* ETFs */}
+                        {portfolio.etfs && portfolio.etfs.length > 0 && (
+                            <>
+                                <h3>ETFs</h3>
+                                {portfolio.etfs.map((etf, index) => (
+                                    <li key={index} className="portfolio-item">
+                                        <span>{etf.symbol}</span>
+                                        <span className={`change-percent ${parseFloat(etf.changePercent) >= 0 ? "green" : "red"}`}>
+                                            {etf.changePercent}
+                                        </span>
+                                    </li>
+                                ))}
+                            </>
+                        )}
 
-    {/* Cryptocurrency */}
-    {portfolio.crypto && portfolio.crypto.length > 0 && (
-        <>
-            <h3>Cryptocurrency</h3>
-            {portfolio.crypto.map((coin, index) => (
-                <li key={index} className="portfolio-item">
-                    <span>{coin.symbol}</span>
-                    <span className={`change-percent ${parseFloat(coin.changePercent) >= 0 ? "green" : "red"}`}>
-                        {coin.changePercent}
-                    </span>
-                </li>
-            ))}
-        </>
-    )}
-</ul>
-
+                        {/* Cryptocurrency */}
+                        {portfolio.crypto && portfolio.crypto.length > 0 && (
+                            <>
+                                <h3>Cryptocurrency</h3>
+                                {portfolio.crypto.map((coin, index) => (
+                                    <li key={index} className="portfolio-item">
+                                        <span>{coin.symbol}</span>
+                                        <span className={`change-percent ${parseFloat(coin.changePercent) >= 0 ? "green" : "red"}`}>
+                                            {coin.changePercent}
+                                        </span>
+                                    </li>
+                                ))}
+                            </>
+                        )}
+                    </ul>
                 </div>
             )}
         </nav>

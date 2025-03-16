@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth, db } from "../firebase"; // Import Firestore and Auth
+import { auth, db } from "../firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import "../assets/css/portfolioCreation.css";
@@ -54,10 +54,8 @@ function PortfolioCreation() {
             const userDoc = await getDoc(userRef);
     
             if (userDoc.exists()) {
-                // Save user preferences to Firestore
                 await setDoc(userRef, { portfolio: formData }, { merge: true });
     
-                // ✅ Send request to generate portfolio
                 const response = await fetch("https://capstone-group5-stockapp.onrender.com/api/generatePortfolio", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -68,10 +66,8 @@ function PortfolioCreation() {
                 const generatedPortfolio = await response.json();
                 console.log("✅ Portfolio Generated:", generatedPortfolio);
     
-                // ✅ Ensure updated portfolio is stored in Firestore
                 await setDoc(userRef, { generatedPortfolio }, { merge: true });
     
-                // ✅ Verify portfolio includes stock data with changePercent
                 console.log("✅ Final Stored Portfolio:", generatedPortfolio);
     
                 navigate("/");
