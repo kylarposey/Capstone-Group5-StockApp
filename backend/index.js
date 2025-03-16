@@ -249,7 +249,7 @@ app.post("/api/generatePortfolio", async (req, res) => {
         async function fetchCryptoChange(symbol) {
             try {
                 console.log(`🔄 Fetching crypto data for: ${symbol}`);
-                const url = `https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=${symbol}&market=USD&apikey=${API_KEY}`;
+                const url = `https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=${symbol}&market=EUR&apikey=${API_KEY}`;
                 const response = await axios.get(url);
                 const data = response.data["Time Series (Digital Currency Daily)"];
         
@@ -258,16 +258,20 @@ app.post("/api/generatePortfolio", async (req, res) => {
                     return { symbol, changePercent: "N/A" };
                 }
         
-                // Extract the most recent two days of data
-                const dates = Object.keys(data).sort((a, b) => new Date(b) - new Date(a));
-                if (dates.length < 2) return { symbol, changePercent: "N/A" };
+                // Get the latest two days of data
+                const dates = Object.keys(data);
+                if (dates.length < 2) {
+                    console.warn(`⚠ Not enough data for ${symbol}`);
+                    return { symbol, changePercent: "N/A" };
+                }
         
-                const latestClose = parseFloat(data[dates[0]]["4a. close (USD)"]);
-                const previousClose = parseFloat(data[dates[1]]["4a. close (USD)"]);
+                const latestDate = dates[0];
+                const previousDate = dates[1];
         
-                if (!latestClose || !previousClose) return { symbol, changePercent: "N/A" };
+                const latestClose = parseFloat(data[latestDate]["4. close"]);
+                const previousClose = parseFloat(data[previousDate]["4. close"]);
         
-                // Calculate daily percentage change
+                // Calculate the percentage change
                 const changePercent = (((latestClose - previousClose) / previousClose) * 100).toFixed(2) + "%";
         
                 return { symbol, changePercent };
