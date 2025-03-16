@@ -227,15 +227,21 @@ app.post("/api/generatePortfolio", async (req, res) => {
 
         async function fetchStockChange(symbol) {
             try {
+                console.log(`🔄 Fetching data for: ${symbol}`);
                 const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`;
                 const response = await axios.get(url);
                 const data = response.data["Global Quote"];
+
+                if (!data || !data["10. change percent"]) {
+                    console.warn(`⚠ No valid data for ${symbol}`);
+                }
+
                 return {
                     symbol,
                     changePercent: data ? data["10. change percent"] : "N/A",
                 };
             } catch (error) {
-                console.error(`Error fetching ${symbol}:`, error.message);
+                console.error(`🔥 Error fetching ${symbol}:`, error.message);
                 return { symbol, changePercent: "N/A" };
             }
         }
@@ -244,10 +250,17 @@ app.post("/api/generatePortfolio", async (req, res) => {
         const updatedStocks = await Promise.all(selectedPortfolio.stocks.map(fetchStockChange));
         const updatedETFs = await Promise.all(selectedPortfolio.etfs.map(fetchStockChange));
 
-        // ✅ Step 6: Store Final Portfolio with Price Data in Firestore
-        const finalPortfolio = { ...selectedPortfolio, stocks: updatedStocks, etfs: updatedETFs };
-        await setDoc(doc(db, "Users", userId), { generatedPortfolio: finalPortfolio }, { merge: true });
+        console.log("✅ Updated Stocks Data:", updatedStocks);
+        console.log("✅ Updated ETFs Data:", updatedETFs);
 
+        // ✅ Step 6: Store Final Portfolio with Price Data in Firestore
+        const finalPortfolio = { 
+            stocks: updatedStocks, 
+            etfs: updatedETFs, 
+            crypto: selectedPortfolio.crypto 
+        };
+
+        await setDoc(doc(db, "Users", userId), { generatedPortfolio: finalPortfolio }, { merge: true });
         res.json(selectedPortfolio);
     } catch (error) {
         console.error("Error generating portfolio:", error.message);
