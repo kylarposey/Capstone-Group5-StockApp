@@ -60,6 +60,7 @@ function PortfolioCreation() {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ userId: user.uid, preferences: formData }),
+                    mode: "cors",
                 });
     
                 const generatedPortfolio = await response.json();

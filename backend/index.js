@@ -18,10 +18,19 @@ const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
 
 const app = express();
-app.use(cors());
-app.options("*", cors()); // Allow preflight requests
+app.use(cors({
+    origin: "*", // Allow all origins (replace with specific origin later)
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type"]
+}));
 
-
+// Handle preflight requests
+app.options("*", (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
+    res.sendStatus(200);
+});
 
 const API_KEY = process.env.REACT_APP_ALPHA_VANTAGE_API_KEY;
 
@@ -53,6 +62,10 @@ const pickRandom = (array, count) => {
 };
 
 app.post("/api/generatePortfolio", async (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
+
     const { userId, preferences } = req.body;
 
     if (!userId || !preferences) {
