@@ -54,8 +54,10 @@ function PortfolioCreation() {
             const userDoc = await getDoc(userRef);
     
             if (userDoc.exists()) {
+                // Save user preferences to Firestore
                 await setDoc(userRef, { portfolio: formData }, { merge: true });
     
+                // ✅ Send request to generate portfolio
                 const response = await fetch("https://capstone-group5-stockapp.onrender.com/api/generatePortfolio", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -64,17 +66,20 @@ function PortfolioCreation() {
                 });
     
                 const generatedPortfolio = await response.json();
+                console.log("✅ Portfolio Generated:", generatedPortfolio);
     
+                // ✅ Ensure updated portfolio is stored in Firestore
                 await setDoc(userRef, { generatedPortfolio }, { merge: true });
     
-                console.log("Portfolio saved successfully with correct categorization!");
+                // ✅ Verify portfolio includes stock data with changePercent
+                console.log("✅ Final Stored Portfolio:", generatedPortfolio);
+    
+                navigate("/");
             } else {
                 console.error("User document not found.");
             }
-    
-            navigate("/");
         } catch (error) {
-            console.error("Error saving portfolio:", error);
+            console.error("🔥 Error saving portfolio:", error);
         }
     };
     
