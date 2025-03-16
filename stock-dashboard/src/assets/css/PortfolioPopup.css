@@ -75,10 +75,13 @@
 .portfolio-item {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 10px;
     background: #f4f4f4;
     margin: 5px 0;
     border-radius: 5px;
+    font-size: 14px;
+    font-weight: 600;
 }
 
 .change-percent {
@@ -96,6 +99,7 @@
     color: red;
     background: #f8d7da;
 }
+
 
 .crypto-placeholder {
     color: gray;

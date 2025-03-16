@@ -246,9 +246,41 @@ app.post("/api/generatePortfolio", async (req, res) => {
             }
         }
 
+        async function fetchCryptoChange(symbol) {
+            try {
+                console.log(`🔄 Fetching crypto data for: ${symbol}`);
+                const url = `https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=${symbol}&market=USD&apikey=${API_KEY}`;
+                const response = await axios.get(url);
+                const data = response.data["Time Series (Digital Currency Daily)"];
+        
+                if (!data) {
+                    console.warn(`⚠ No valid data for ${symbol}`);
+                    return { symbol, changePercent: "N/A" };
+                }
+        
+                // Extract the most recent two days of data
+                const dates = Object.keys(data).sort((a, b) => new Date(b) - new Date(a));
+                if (dates.length < 2) return { symbol, changePercent: "N/A" };
+        
+                const latestClose = parseFloat(data[dates[0]]["4a. close (USD)"]);
+                const previousClose = parseFloat(data[dates[1]]["4a. close (USD)"]);
+        
+                if (!latestClose || !previousClose) return { symbol, changePercent: "N/A" };
+        
+                // Calculate daily percentage change
+                const changePercent = (((latestClose - previousClose) / previousClose) * 100).toFixed(2) + "%";
+        
+                return { symbol, changePercent };
+            } catch (error) {
+                console.error(`🔥 Error fetching ${symbol}:`, error.message);
+                return { symbol, changePercent: "N/A" };
+            }
+        }
+
         // ✅ Step 4: Fetch Price Changes for Selected Stocks & ETFs
         const updatedStocks = await Promise.all(selectedPortfolio.stocks.map(fetchStockChange));
         const updatedETFs = await Promise.all(selectedPortfolio.etfs.map(fetchStockChange));
+        const updatedCrypto = await Promise.all(selectedPortfolio.crypto.map(fetchCryptoChange));
 
         console.log("✅ Updated Stocks Data:", updatedStocks);
         console.log("✅ Updated ETFs Data:", updatedETFs);
@@ -257,7 +289,7 @@ app.post("/api/generatePortfolio", async (req, res) => {
         const finalPortfolio = { 
             stocks: updatedStocks, 
             etfs: updatedETFs, 
-            crypto: selectedPortfolio.crypto 
+            crypto: updatedCrypto 
         };
 
         await setDoc(doc(db, "Users", userId), { generatedPortfolio: finalPortfolio }, { merge: true });
