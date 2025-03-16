@@ -72,6 +72,36 @@
     transition: background 0.3s ease;
 }
 
+.portfolio-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background: #f4f4f4;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+.change-percent {
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+.green {
+    color: green;
+    background: #d4edda;
+}
+
+.red {
+    color: red;
+    background: #f8d7da;
+}
+
+.crypto-placeholder {
+    color: gray;
+    font-size: 0.9em;
+}
+
 .portfolio-list li:hover {
     background: #e0e0e0;
 }

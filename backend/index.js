@@ -211,6 +211,7 @@ app.post("/api/generatePortfolio", async (req, res) => {
         selectedPortfolio.stocks = pickRandom(availableStocks, stockCount);
         selectedPortfolio.etfs = pickRandom(availableETFs, etfCount);
         selectedPortfolio.crypto = includesCrypto ? pickRandom(investmentCategories["crypto"].symbols, 2) : [];
+        
 
         await setDoc(doc(db, "Users", userId), { generatedPortfolio: selectedPortfolio }, { merge: true });
 
@@ -218,6 +219,55 @@ app.post("/api/generatePortfolio", async (req, res) => {
     } catch (error) {
         console.error("Error generating portfolio:", error.message);
         res.status(500).json({ error: "Failed to generate portfolio", details: error.message });
+    }
+});
+
+app.get("/api/fetchPortfolioData", async (req, res) => {
+    const { userId } = req.query;
+    if (!userId) {
+        return res.status(400).json({ error: "User ID is required" });
+    }
+
+    try {
+        const userDocRef = doc(db, "Users", userId);
+        const userDoc = await getDoc(userDocRef);
+
+        if (!userDoc.exists()) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        let portfolio = userDoc.data().generatedPortfolio;
+        if (!portfolio) {
+            return res.status(404).json({ error: "No portfolio found for this user" });
+        }
+
+        // Fetch stock market data for each stock and ETF
+        async function fetchStockChange(symbol) {
+            try {
+                const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`;
+                const response = await axios.get(url);
+                const data = response.data["Global Quote"];
+                return {
+                    symbol,
+                    changePercent: data ? data["10. change percent"] : "N/A",
+                };
+            } catch (error) {
+                console.error(`Error fetching ${symbol}:`, error.message);
+                return { symbol, changePercent: "N/A" };
+            }
+        }
+
+        const updatedStocks = await Promise.all(portfolio.stocks.map(fetchStockChange));
+        const updatedETFs = await Promise.all(portfolio.etfs.map(fetchStockChange));
+
+        // Update Firebase with market data
+        const updatedPortfolio = { ...portfolio, stocks: updatedStocks, etfs: updatedETFs };
+        await setDoc(userDocRef, { generatedPortfolio: updatedPortfolio }, { merge: true });
+
+        res.json(updatedPortfolio);
+    } catch (error) {
+        console.error("Error fetching portfolio data:", error.message);
+        res.status(500).json({ error: "Failed to fetch portfolio data", details: error.message });
     }
 });
 
