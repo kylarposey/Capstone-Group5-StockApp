@@ -246,14 +246,14 @@ app.post("/api/generatePortfolio", async (req, res) => {
             }
         }
 
-        // ✅ Step 5: Fetch Price Changes for Selected Stocks & ETFs
+        // ✅ Step 4: Fetch Price Changes for Selected Stocks & ETFs
         const updatedStocks = await Promise.all(selectedPortfolio.stocks.map(fetchStockChange));
         const updatedETFs = await Promise.all(selectedPortfolio.etfs.map(fetchStockChange));
 
         console.log("✅ Updated Stocks Data:", updatedStocks);
         console.log("✅ Updated ETFs Data:", updatedETFs);
 
-        // ✅ Step 6: Store Final Portfolio with Price Data in Firestore
+        // ✅ Step 5: Store Final Portfolio with Price Data in Firestore
         const finalPortfolio = { 
             stocks: updatedStocks, 
             etfs: updatedETFs, 
@@ -261,9 +261,11 @@ app.post("/api/generatePortfolio", async (req, res) => {
         };
 
         await setDoc(doc(db, "Users", userId), { generatedPortfolio: finalPortfolio }, { merge: true });
-        res.json(selectedPortfolio);
+
+        console.log(`✅ Portfolio saved successfully for User ID: ${userId}`);
+        res.json(finalPortfolio);
     } catch (error) {
-        console.error("Error generating portfolio:", error.message);
+        console.error("🔥 Error generating portfolio:", error.message);
         res.status(500).json({ error: "Failed to generate portfolio", details: error.message });
     }
 });
