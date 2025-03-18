@@ -313,7 +313,7 @@ const fetchMarketNews = async (symbol) => {
     }
 };
 
-app.post("/api/trending-news", async (req, res) => {
+app.post("/api/trendingNews", async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.header("Access-Control-Allow-Headers", "Content-Type");
