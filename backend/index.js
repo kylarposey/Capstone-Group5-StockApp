@@ -32,7 +32,7 @@ app.options("*", (req, res) => {
     res.sendStatus(200);
 });
 
-const API_KEY = process.env.REACT_APP_ALPHA_VANTAGE_API_KEY;
+const ALPHA_VANTAGE_API_KEY = process.env.REACT_APP_ALPHA_VANTAGE_API_KEY;
 
 app.get("/", (req, res) => {
     res.send("🚀 Backend is running! API available at /api/stock?symbol=AAPL");
