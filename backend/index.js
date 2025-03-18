@@ -313,37 +313,58 @@ const fetchMarketNews = async (symbol) => {
     }
 };
 
-app.get("/api/trending", async (req, res) => {
-    const { userId } = req.query;
+app.post("/api/trendingNews", async (req, res) => {
+    const { userId } = req.body;
 
     if (!userId) {
-        return res.status(400).json({ error: "User ID is required" });
+        return res.status(400).json({ error: "User ID is required." });
     }
 
     try {
-        const userDocRef = doc(db, "Users", userId);
-        const userDoc = await getDoc(userDocRef);
+        // 🔹 Step 1: Get user's portfolio
+        const userRef = doc(db, "Users", userId);
+        const userDoc = await getDoc(userRef);
 
         if (!userDoc.exists()) {
-            return res.status(404).json({ error: "User portfolio not found" });
+            return res.status(404).json({ error: "User not found." });
         }
 
         const portfolio = userDoc.data().generatedPortfolio;
-        const stocks = portfolio.stocks.map((stock) => stock.symbol);
-        const etfs = portfolio.etfs.map((etf) => etf.symbol);
-        const allSymbols = [...new Set([...stocks, ...etfs])];
+        if (!portfolio) {
+            return res.status(404).json({ error: "No portfolio found." });
+        }
 
-        console.log("Fetching news for:", allSymbols);
+        // 🔹 Step 2: Extract stock, ETF, and crypto tickers
+        const tickers = [
+            ...(portfolio.stocks?.map((s) => s.symbol) || []),
+            ...(portfolio.etfs?.map((e) => e.symbol) || []),
+            ...(portfolio.crypto?.map((c) => c.symbol) || []),
+        ];
 
-        const newsPromises = allSymbols.map(fetchMarketNews);
-        const newsResults = await Promise.all(newsPromises);
+        if (tickers.length === 0) {
+            return res.json({ message: "No relevant news. No tickers found in the portfolio." });
+        }
 
-        const allNews = newsResults.flat();
+        console.log("📈 Fetching news for tickers:", tickers);
 
-        res.json({ news: allNews });
+        // 🔹 Step 3: Fetch Market News
+        const newsURL = `https://www.alphavantage.co/query?function=NEWS_SENTIMENT&apikey=${ALPHA_VANTAGE_API_KEY}`;
+        const newsResponse = await axios.get(newsURL);
+        const articles = newsResponse.data.feed || [];
+
+        console.log(`📰 Fetched ${articles.length} articles from Alpha Vantage.`);
+
+        // 🔹 Step 4: Filter news based on portfolio tickers
+        const relevantNews = articles.filter(article => 
+            tickers.some(ticker => article.title.includes(ticker) || article.summary.includes(ticker))
+        );
+
+        console.log(`✅ Found ${relevantNews.length} relevant articles.`);
+
+        res.json(relevantNews);
     } catch (error) {
-        console.error("Error fetching trending news:", error);
-        res.status(500).json({ error: "Failed to fetch trending news" });
+        console.error("🔥 Error fetching trending news:", error);
+        res.status(500).json({ error: "Failed to fetch news", details: error.message });
     }
 });
 

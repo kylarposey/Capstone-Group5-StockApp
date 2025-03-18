@@ -9,7 +9,7 @@ import Header from './Components/Header';
 import Home from "./Components/Home";
 import Footer from './Components/Footer';
 import NewUser from './Components/newUser';
-import Trending from "./pages/Trending";
+import Trending from "./Components/Trending";
 import PortfolioCreation from './Components/PortfolioCreation';
 
 
