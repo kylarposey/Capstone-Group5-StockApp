@@ -3,7 +3,7 @@ const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
 const { initializeApp } = require("firebase/app");
-const { getFirestore, doc, setDoc } = require("firebase/firestore");
+const { getFirestore, doc, getDoc, setDoc } = require("firebase/firestore");
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -19,12 +19,20 @@ const db = getFirestore(firebaseApp);
 
 const app = express();
 app.use(cors({
-    origin: ["http://localhost:3000", "https://group5-capstone-project.web.app"],
-    methods: ["GET", "POST"],
+    origin: "*", 
+    methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Content-Type"]
 }));
 
-const API_KEY = process.env.REACT_APP_ALPHA_VANTAGE_API_KEY;
+// Handle preflight requests
+app.options("*", (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
+    res.sendStatus(200);
+});
+
+const ALPHA_VANTAGE_API_KEY = process.env.REACT_APP_ALPHA_VANTAGE_API_KEY;
 
 app.get("/", (req, res) => {
     res.send("🚀 Backend is running! API available at /api/stock?symbol=AAPL");
@@ -37,7 +45,7 @@ app.get("/api/stock", async (req, res) => {
     }
 
     try {
-        const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`;
+        const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${ALPHA_VANTAGE_API_KEY}`;
         const response = await axios.get(url);
         res.json(response.data);
     } catch (error) {
@@ -54,6 +62,10 @@ const pickRandom = (array, count) => {
 };
 
 app.post("/api/generatePortfolio", async (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
+
     const { userId, preferences } = req.body;
 
     if (!userId || !preferences) {
@@ -211,13 +223,187 @@ app.post("/api/generatePortfolio", async (req, res) => {
         selectedPortfolio.stocks = pickRandom(availableStocks, stockCount);
         selectedPortfolio.etfs = pickRandom(availableETFs, etfCount);
         selectedPortfolio.crypto = includesCrypto ? pickRandom(investmentCategories["crypto"].symbols, 2) : [];
+        
 
-        await setDoc(doc(db, "Users", userId), { generatedPortfolio: selectedPortfolio }, { merge: true });
+        async function fetchStockChange(symbol) {
+            try {
+                console.log(`🔄 Fetching data for: ${symbol}`);
+                const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${ALPHA_VANTAGE_API_KEY}`;
+                const response = await axios.get(url);
+                const data = response.data["Global Quote"];
 
-        res.json(selectedPortfolio);
+                if (!data || !data["10. change percent"]) {
+                    console.warn(`⚠ No valid data for ${symbol}`);
+                }
+
+                return {
+                    symbol,
+                    changePercent: data ? data["10. change percent"] : "N/A",
+                };
+            } catch (error) {
+                console.error(`🔥 Error fetching ${symbol}:`, error.message);
+                return { symbol, changePercent: "N/A" };
+            }
+        }
+
+        async function fetchCryptoChange(symbol) {
+            try {
+                console.log(`🔄 Fetching crypto data for: ${symbol}`);
+                const url = `https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=${symbol}&market=EUR&apikey=${ALPHA_VANTAGE_API_KEY}`;
+                const response = await axios.get(url);
+                const data = response.data["Time Series (Digital Currency Daily)"];
+        
+                if (!data) {
+                    console.warn(`⚠ No valid data for ${symbol}`);
+                    return { symbol, changePercent: "N/A" };
+                }
+        
+                const dates = Object.keys(data);
+                if (dates.length < 2) {
+                    console.warn(`⚠ Not enough data for ${symbol}`);
+                    return { symbol, changePercent: "N/A" };
+                }
+        
+                const latestDate = dates[0];
+                const previousDate = dates[1];
+        
+                const latestClose = parseFloat(data[latestDate]["4. close"]);
+                const previousClose = parseFloat(data[previousDate]["4. close"]);
+        
+                const changePercent = (((latestClose - previousClose) / previousClose) * 100).toFixed(2) + "%";
+        
+                return { symbol, changePercent };
+            } catch (error) {
+                console.error(`🔥 Error fetching ${symbol}:`, error.message);
+                return { symbol, changePercent: "N/A" };
+            }
+        }
+
+        const updatedStocks = await Promise.all(selectedPortfolio.stocks.map(fetchStockChange));
+        const updatedETFs = await Promise.all(selectedPortfolio.etfs.map(fetchStockChange));
+        const updatedCrypto = await Promise.all(selectedPortfolio.crypto.map(fetchCryptoChange));
+
+        console.log("✅ Updated Stocks Data:", updatedStocks);
+        console.log("✅ Updated ETFs Data:", updatedETFs);
+
+        const finalPortfolio = { 
+            stocks: updatedStocks, 
+            etfs: updatedETFs, 
+            crypto: updatedCrypto 
+        };
+
+        await setDoc(doc(db, "Users", userId), { generatedPortfolio: finalPortfolio }, { merge: true });
+
+        console.log(`✅ Portfolio saved successfully for User ID: ${userId}`);
+        res.json(finalPortfolio);
     } catch (error) {
-        console.error("Error generating portfolio:", error.message);
+        console.error("🔥 Error generating portfolio:", error.message);
         res.status(500).json({ error: "Failed to generate portfolio", details: error.message });
+    }
+});
+
+const fetchMarketNews = async (symbol) => {
+    try {
+        const url = `https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers=${symbol}&apikey=${ALPHA_VANTAGE_API_KEY}`;
+        const response = await axios.get(url);
+        return response.data.feed || [];
+    } catch (error) {
+        console.error(`Error fetching news for ${symbol}:`, error);
+        return [];
+    }
+};
+
+app.post("/api/trendingNews", async (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
+
+    const { userId } = req.body;
+
+    if (!userId) {
+        return res.status(400).json({ error: "User ID is required" });
+    }
+
+    try {
+        const userRef = doc(db, "Users", userId);
+        const userDoc = await getDoc(userRef);
+
+        if (!userDoc.exists()) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        const userData = userDoc.data();
+        const portfolio = userData.generatedPortfolio || {};
+        const investmentTypes = userData.portfolio?.investmentTypes || [];
+
+        let tickers = [
+            ...(portfolio.stocks || []).map(stock => stock.symbol),
+            ...(portfolio.etfs || []).map(etf => etf.symbol),
+            ...(portfolio.crypto || [])
+        ];
+
+        tickers = [...new Set(tickers)].slice(0, 6);
+        console.log("Fetching news for tickers:", tickers);
+
+        let newsArticles = [];
+        for (const ticker of tickers) {
+            try {
+                const response = await axios.get(`https://www.alphavantage.co/query`, {
+                    params: {
+                        function: "NEWS_SENTIMENT",
+                        tickers: ticker,
+                        apikey: ALPHA_VANTAGE_API_KEY
+                    }
+                });
+                if (response.data && response.data.feed) {
+                    newsArticles.push(...response.data.feed.slice(0, 2));
+                }
+            } catch (error) {
+                console.error(`🔥 Error fetching news for ${ticker}:`, error.message);
+            }
+        }
+
+        if (newsArticles.length < 9) {
+            console.log("Fetching additional news based on user preferences...");
+
+            const categories = {
+                "Growth stocks": "growth investing",
+                "Dividend stocks": "dividend investing",
+                "ETFs": "exchange traded funds",
+                "Cryptocurrencies": "crypto market",
+                "REITs": "real estate investing"
+            };
+
+            const selectedCategories = investmentTypes
+                .filter(type => categories[type])
+                .map(type => categories[type]);
+
+            for (const category of selectedCategories) {
+                try {
+                    const response = await axios.get(`https://www.alphavantage.co/query`, {
+                        params: {
+                            function: "NEWS_SENTIMENT",
+                            topics: category,
+                            apikey: ALPHA_VANTAGE_API_KEY
+                        }
+                    });
+
+                    if (response.data && response.data.feed) {
+                        newsArticles.push(...response.data.feed.slice(0, 3));
+                    }
+                } catch (error) {
+                    console.error(`🔥 Error fetching category news for ${category}:`, error.message);
+                }
+
+                if (newsArticles.length >= 9) break;
+            }
+        }
+
+        console.log(`✅ Total news articles fetched: ${newsArticles.length}`);
+        res.json({ news: newsArticles });
+    } catch (error) {
+        console.error("🔥 Error fetching trending news:", error.message);
+        res.status(500).json({ error: "Failed to fetch trending news", details: error.message });
     }
 });
 
