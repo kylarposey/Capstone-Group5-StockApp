@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth, db } from "../firebase"; // Import Firestore and Auth
+import { auth, db } from "../firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import { NotificationContext } from "../App";
 import "../assets/css/portfolioCreation.css";
 
 function PortfolioCreation() {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
+    const { addNotification } = useContext(NotificationContext);
     const [formData, setFormData] = useState({
         riskTolerance: "",
         investmentTypes: [],
@@ -60,20 +62,22 @@ function PortfolioCreation() {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ userId: user.uid, preferences: formData }),
+                    mode: "cors",
                 });
     
                 const generatedPortfolio = await response.json();
+                console.log("✅ Portfolio Generated:", generatedPortfolio);
     
                 await setDoc(userRef, { generatedPortfolio }, { merge: true });
     
-                console.log("Portfolio saved successfully with correct categorization!");
+                console.log("✅ Final Stored Portfolio:", generatedPortfolio);
+                addNotification("✅ Recommended Portfolio Generated!");
+                navigate("/");
             } else {
                 console.error("User document not found.");
             }
-    
-            navigate("/");
         } catch (error) {
-            console.error("Error saving portfolio:", error);
+            console.error("🔥 Error saving portfolio:", error);
         }
     };
     

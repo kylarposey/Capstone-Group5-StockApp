@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { Link } from "react-router-dom";
 import { auth, db } from "../firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
+import { NotificationContext } from "../App";
 import "../assets/css/style.css";
 import "../assets/css/PortfolioPopup.css";
 
@@ -10,12 +11,21 @@ function Header() {
     const [user, setUser] = useState(null);
     const [portfolio, setPortfolio] = useState(null);
     const [showPopup, setShowPopup] = useState(false);
+    const [showInbox, setShowInbox] = useState(false);
+    const {notifications, addNotification, removeNotification } = useContext(NotificationContext);
+    const inboxRef = useRef(null);
     const popupRef = useRef(null);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
+            if (currentUser) {
+                setUser(currentUser);
+                addNotification("✅ Successfully Logged In!", false);
+            } else {
+                setUser(null);
+            }
         });
+
         return () => unsubscribe();
     }, []);
 
@@ -78,6 +88,29 @@ function Header() {
         <nav className="header">
             <Link to="/" className="title">Stock App</Link>
             <ul className="nav-links">
+                {user && (
+                    <li className="nav-item">
+                        <button className="nav-link-button" onClick={() => setShowInbox(!showInbox)}>
+                            Inbox {notifications.length > 0 && `(${notifications.length})`}
+                        </button>
+                        {showInbox && (
+                            <div className="inbox-dropdown">
+                                <h3>Inbox</h3>
+                                {notifications.length > 0 ? (
+                                    notifications.map((note) => (
+                                        <div key={note.id} className="inbox-item">
+                                            <span dangerouslySetInnerHTML={{ __html: note.message }} />
+                                            <button className="delete-btn" onClick={() => removeNotification(note.id)}>✖</button>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="inbox-empty">No notifications yet.</p>
+                                )}
+                            </div>
+                        )}
+                    </li>
+                )}
+
                 <li><Link to="/about">About</Link></li>
 
                 {user && (
@@ -87,14 +120,13 @@ function Header() {
                         </button>
                     </li>
                 )}
-
-                {!user ? (
+                {user ? (
+                    <li><button onClick={() => signOut(auth)} className="nav-link-button">Logout</button></li>
+                ) : (
                     <>
                         <li><Link to="/login">Login</Link></li>
                         <li><Link to="/newUser">Register</Link></li>
                     </>
-                ) : (
-                    <li><button onClick={() => signOut(auth)} className="nav-link-button">Logout</button></li>
                 )}
             </ul>
 
@@ -111,7 +143,12 @@ function Header() {
                             <>
                                 <h3>Stocks</h3>
                                 {portfolio.stocks.map((stock, index) => (
-                                    <li key={index}>{stock}</li>
+                                    <li key={index} className="portfolio-item">
+                                        <span>{stock.symbol}</span>
+                                        <span className={`change-percent ${parseFloat(stock.changePercent) >= 0 ? "green" : "red"}`}>
+                                            {stock.changePercent}
+                                        </span>
+                                    </li>
                                 ))}
                             </>
                         )}
@@ -121,7 +158,12 @@ function Header() {
                             <>
                                 <h3>ETFs</h3>
                                 {portfolio.etfs.map((etf, index) => (
-                                    <li key={index}>{etf}</li>
+                                    <li key={index} className="portfolio-item">
+                                        <span>{etf.symbol}</span>
+                                        <span className={`change-percent ${parseFloat(etf.changePercent) >= 0 ? "green" : "red"}`}>
+                                            {etf.changePercent}
+                                        </span>
+                                    </li>
                                 ))}
                             </>
                         )}
@@ -131,7 +173,12 @@ function Header() {
                             <>
                                 <h3>Cryptocurrency</h3>
                                 {portfolio.crypto.map((coin, index) => (
-                                    <li key={index}>{coin}</li>
+                                    <li key={index} className="portfolio-item">
+                                        <span>{coin.symbol}</span>
+                                        <span className={`change-percent ${parseFloat(coin.changePercent) >= 0 ? "green" : "red"}`}>
+                                            {coin.changePercent}
+                                        </span>
+                                    </li>
                                 ))}
                             </>
                         )}
