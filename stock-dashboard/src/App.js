@@ -9,6 +9,7 @@ import Header from './Components/Header';
 import Home from "./Components/Home";
 import Footer from './Components/Footer';
 import NewUser from './Components/newUser';
+import Trending from "./pages/Trending";
 import PortfolioCreation from './Components/PortfolioCreation';
 
 
@@ -30,6 +31,7 @@ function App() {
                         <Route path="/" element={<Home />} />
                         <Route path="/about" element={<About />} />
                         <Route path="/newUser" element={<NewUser />} />
+                        <Route path="/trends" element={<Trending />} />
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/PortfolioCreation" element={<PortfolioCreation />} />
                         <Route path="*" element={<NotFound />} />

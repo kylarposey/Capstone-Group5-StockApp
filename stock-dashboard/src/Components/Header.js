@@ -10,6 +10,7 @@ function Header() {
     const [user, setUser] = useState(null);
     const [portfolio, setPortfolio] = useState(null);
     const [showPopup, setShowPopup] = useState(false);
+    const [showInbox, setShowInbox] = useState(false);
     const popupRef = useRef(null);
 
     useEffect(() => {
@@ -78,6 +79,21 @@ function Header() {
         <nav className="header">
             <Link to="/" className="title">Stock App</Link>
             <ul className="nav-links">
+
+                {/* Inbox Button - Only for Logged-in Users */}
+                {user && (
+                    <li className="nav-item inbox-container">
+                        <button className="nav-link-button" onClick={() => setShowInbox(!showInbox)}>
+                            Inbox
+                        </button>
+                        {showInbox && (
+                            <div className="inbox-dropdown">
+                                {/* Blank dropdown content */}
+                            </div>
+                        )}
+                    </li>
+                )}
+
                 <li><Link to="/about">About</Link></li>
 
                 {user && (

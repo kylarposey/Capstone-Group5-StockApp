@@ -21,6 +21,29 @@ body {
 }
 
 /* ============================== */
+/*          INBOX DROPDOWN        */
+/* ============================== */
+.inbox-container {
+    position: relative;
+}
+
+.inbox-dropdown {
+    position: absolute;
+    top: 50px; /* Moves it further down */
+    left: 0;
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    width: 250px; /* Wider dropdown */
+    height: 300px; /* Makes it longer */
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+/* ============================== */
 /*            Footer              */
 /* ============================== */
 .app-container {
@@ -31,11 +54,11 @@ body {
 
 .main-content {
     flex: 1;
-    padding-bottom: 60px; /* Ensures space for footer */
+    padding-bottom: 60px;
 }
 
 .footer {
-    position: relative; /* Prevents overlap */
+    position: relative;
     bottom: 0;
     left: 0;
     width: 100%;
@@ -178,13 +201,13 @@ body {
 .nav-links {
     list-style: none;
     display: flex;
-    align-items: center; /* Ensures vertical alignment */
+    align-items: center;
     gap: 10px;
     padding: 0;
 }
 
 .nav-links li {
-    display: flex; /* Ensures consistent alignment */
+    display: flex;
 }
 
 .nav-links a, .nav-link-button {
@@ -197,11 +220,11 @@ body {
     background: none;
     cursor: pointer;
     transition: 0.3s;
-    display: inline-block; /* Ensures inline consistency */
+    display: inline-block;
 }
 
 .nav-link-button {
-    font-family: inherit; /* Matches the font style with other links */
+    font-family: inherit;
     border: 2px solid black;
     background: none;
     outline: none;

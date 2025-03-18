@@ -258,7 +258,6 @@ app.post("/api/generatePortfolio", async (req, res) => {
                     return { symbol, changePercent: "N/A" };
                 }
         
-                // Get the latest two days of data
                 const dates = Object.keys(data);
                 if (dates.length < 2) {
                     console.warn(`⚠ Not enough data for ${symbol}`);
@@ -271,7 +270,6 @@ app.post("/api/generatePortfolio", async (req, res) => {
                 const latestClose = parseFloat(data[latestDate]["4. close"]);
                 const previousClose = parseFloat(data[previousDate]["4. close"]);
         
-                // Calculate the percentage change
                 const changePercent = (((latestClose - previousClose) / previousClose) * 100).toFixed(2) + "%";
         
                 return { symbol, changePercent };
@@ -281,7 +279,6 @@ app.post("/api/generatePortfolio", async (req, res) => {
             }
         }
 
-        // ✅ Step 4: Fetch Price Changes for Selected Stocks & ETFs
         const updatedStocks = await Promise.all(selectedPortfolio.stocks.map(fetchStockChange));
         const updatedETFs = await Promise.all(selectedPortfolio.etfs.map(fetchStockChange));
         const updatedCrypto = await Promise.all(selectedPortfolio.crypto.map(fetchCryptoChange));
@@ -289,7 +286,6 @@ app.post("/api/generatePortfolio", async (req, res) => {
         console.log("✅ Updated Stocks Data:", updatedStocks);
         console.log("✅ Updated ETFs Data:", updatedETFs);
 
-        // ✅ Step 5: Store Final Portfolio with Price Data in Firestore
         const finalPortfolio = { 
             stocks: updatedStocks, 
             etfs: updatedETFs, 
@@ -303,6 +299,51 @@ app.post("/api/generatePortfolio", async (req, res) => {
     } catch (error) {
         console.error("🔥 Error generating portfolio:", error.message);
         res.status(500).json({ error: "Failed to generate portfolio", details: error.message });
+    }
+});
+
+const fetchMarketNews = async (symbol) => {
+    try {
+        const url = `https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers=${symbol}&apikey=${API_KEY}`;
+        const response = await axios.get(url);
+        return response.data.feed || [];
+    } catch (error) {
+        console.error(`Error fetching news for ${symbol}:`, error);
+        return [];
+    }
+};
+
+app.get("/api/trending", async (req, res) => {
+    const { userId } = req.query;
+
+    if (!userId) {
+        return res.status(400).json({ error: "User ID is required" });
+    }
+
+    try {
+        const userDocRef = doc(db, "Users", userId);
+        const userDoc = await getDoc(userDocRef);
+
+        if (!userDoc.exists()) {
+            return res.status(404).json({ error: "User portfolio not found" });
+        }
+
+        const portfolio = userDoc.data().generatedPortfolio;
+        const stocks = portfolio.stocks.map((stock) => stock.symbol);
+        const etfs = portfolio.etfs.map((etf) => etf.symbol);
+        const allSymbols = [...new Set([...stocks, ...etfs])];
+
+        console.log("Fetching news for:", allSymbols);
+
+        const newsPromises = allSymbols.map(fetchMarketNews);
+        const newsResults = await Promise.all(newsPromises);
+
+        const allNews = newsResults.flat();
+
+        res.json({ news: allNews });
+    } catch (error) {
+        console.error("Error fetching trending news:", error);
+        res.status(500).json({ error: "Failed to fetch trending news" });
     }
 });
 
