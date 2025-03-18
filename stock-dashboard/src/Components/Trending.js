@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import "../assets/css/style.css";
+import "../assets/css/trending.css";
 
 function Trending() {
     const [news, setNews] = useState([]);
