@@ -228,7 +228,7 @@ app.post("/api/generatePortfolio", async (req, res) => {
         async function fetchStockChange(symbol) {
             try {
                 console.log(`🔄 Fetching data for: ${symbol}`);
-                const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`;
+                const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${ALPHA_VANTAGE_API_KEY}`;
                 const response = await axios.get(url);
                 const data = response.data["Global Quote"];
 
@@ -249,7 +249,7 @@ app.post("/api/generatePortfolio", async (req, res) => {
         async function fetchCryptoChange(symbol) {
             try {
                 console.log(`🔄 Fetching crypto data for: ${symbol}`);
-                const url = `https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=${symbol}&market=EUR&apikey=${API_KEY}`;
+                const url = `https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=${symbol}&market=EUR&apikey=${ALPHA_VANTAGE_API_KEY}`;
                 const response = await axios.get(url);
                 const data = response.data["Time Series (Digital Currency Daily)"];
         
@@ -304,7 +304,7 @@ app.post("/api/generatePortfolio", async (req, res) => {
 
 const fetchMarketNews = async (symbol) => {
     try {
-        const url = `https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers=${symbol}&apikey=${API_KEY}`;
+        const url = `https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers=${symbol}&apikey=${ALPHA_VANTAGE_API_KEY}`;
         const response = await axios.get(url);
         return response.data.feed || [];
     } catch (error) {
@@ -313,58 +313,97 @@ const fetchMarketNews = async (symbol) => {
     }
 };
 
-app.post("/api/trendingNews", async (req, res) => {
+app.post("/api/trending-news", async (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
+
     const { userId } = req.body;
 
     if (!userId) {
-        return res.status(400).json({ error: "User ID is required." });
+        return res.status(400).json({ error: "User ID is required" });
     }
 
     try {
-        // 🔹 Step 1: Get user's portfolio
         const userRef = doc(db, "Users", userId);
         const userDoc = await getDoc(userRef);
 
         if (!userDoc.exists()) {
-            return res.status(404).json({ error: "User not found." });
+            return res.status(404).json({ error: "User not found" });
         }
 
-        const portfolio = userDoc.data().generatedPortfolio;
-        if (!portfolio) {
-            return res.status(404).json({ error: "No portfolio found." });
-        }
+        const userData = userDoc.data();
+        const portfolio = userData.generatedPortfolio || {};
+        const investmentTypes = userData.portfolio?.investmentTypes || [];
 
-        // 🔹 Step 2: Extract stock, ETF, and crypto tickers
-        const tickers = [
-            ...(portfolio.stocks?.map((s) => s.symbol) || []),
-            ...(portfolio.etfs?.map((e) => e.symbol) || []),
-            ...(portfolio.crypto?.map((c) => c.symbol) || []),
+        let tickers = [
+            ...(portfolio.stocks || []).map(stock => stock.symbol),
+            ...(portfolio.etfs || []).map(etf => etf.symbol),
+            ...(portfolio.crypto || [])
         ];
 
-        if (tickers.length === 0) {
-            return res.json({ message: "No relevant news. No tickers found in the portfolio." });
+        tickers = [...new Set(tickers)].slice(0, 6);
+        console.log("Fetching news for tickers:", tickers);
+
+        let newsArticles = [];
+        for (const ticker of tickers) {
+            try {
+                const response = await axios.get(`https://www.alphavantage.co/query`, {
+                    params: {
+                        function: "NEWS_SENTIMENT",
+                        tickers: ticker,
+                        apikey: ALPHA_VANTAGE_API_KEY
+                    }
+                });
+                if (response.data && response.data.feed) {
+                    newsArticles.push(...response.data.feed.slice(0, 2));
+                }
+            } catch (error) {
+                console.error(`🔥 Error fetching news for ${ticker}:`, error.message);
+            }
         }
 
-        console.log("📈 Fetching news for tickers:", tickers);
+        if (newsArticles.length < 9) {
+            console.log("Fetching additional news based on user preferences...");
 
-        // 🔹 Step 3: Fetch Market News
-        const newsURL = `https://www.alphavantage.co/query?function=NEWS_SENTIMENT&apikey=${ALPHA_VANTAGE_API_KEY}`;
-        const newsResponse = await axios.get(newsURL);
-        const articles = newsResponse.data.feed || [];
+            const categories = {
+                "Growth stocks": "growth investing",
+                "Dividend stocks": "dividend investing",
+                "ETFs": "exchange traded funds",
+                "Cryptocurrencies": "crypto market",
+                "REITs": "real estate investing"
+            };
 
-        console.log(`📰 Fetched ${articles.length} articles from Alpha Vantage.`);
+            const selectedCategories = investmentTypes
+                .filter(type => categories[type])
+                .map(type => categories[type]);
 
-        // 🔹 Step 4: Filter news based on portfolio tickers
-        const relevantNews = articles.filter(article => 
-            tickers.some(ticker => article.title.includes(ticker) || article.summary.includes(ticker))
-        );
+            for (const category of selectedCategories) {
+                try {
+                    const response = await axios.get(`https://www.alphavantage.co/query`, {
+                        params: {
+                            function: "NEWS_SENTIMENT",
+                            topics: category,
+                            apikey: ALPHA_VANTAGE_API_KEY
+                        }
+                    });
 
-        console.log(`✅ Found ${relevantNews.length} relevant articles.`);
+                    if (response.data && response.data.feed) {
+                        newsArticles.push(...response.data.feed.slice(0, 3));
+                    }
+                } catch (error) {
+                    console.error(`🔥 Error fetching category news for ${category}:`, error.message);
+                }
 
-        res.json(relevantNews);
+                if (newsArticles.length >= 9) break;
+            }
+        }
+
+        console.log(`✅ Total news articles fetched: ${newsArticles.length}`);
+        res.json({ news: newsArticles });
     } catch (error) {
-        console.error("🔥 Error fetching trending news:", error);
-        res.status(500).json({ error: "Failed to fetch news", details: error.message });
+        console.error("🔥 Error fetching trending news:", error.message);
+        res.status(500).json({ error: "Failed to fetch trending news", details: error.message });
     }
 });
 
