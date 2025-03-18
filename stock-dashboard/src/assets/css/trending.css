@@ -1,52 +1,58 @@
 .trending-container {
+    max-width: 900px;
+    margin: auto;
     padding: 20px;
-    text-align: center;
-    background-color: #f5f5f5;
 }
 
 .trending-title {
+    text-align: center;
     font-size: 2rem;
-    margin-bottom: 20px;
     font-weight: bold;
+    margin-bottom: 20px;
 }
 
-.news-cards-container {
+.news-list {
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 15px;
-    max-width: 800px;
-    margin: 0 auto;
-    overflow-y: auto;
-    max-height: 600px;
 }
 
 .news-card {
     background: white;
     padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 100%;
-    max-width: 700px;
-    text-align: left;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.news-card h2 {
-    font-size: 18px;
+.news-card h3 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
 }
 
 .news-card p {
-    font-size: 14px;
+    font-size: 0.9rem;
     color: #555;
 }
 
 .news-card a {
-    display: block;
-    margin-top: 10px;
-    color: blue;
     text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
 }
 
 .news-card a:hover {
     text-decoration: underline;
+}
+
+.loading-text, .error-text {
+    text-align: center;
+    font-size: 1rem;
+    color: red;
+}
+
+.no-news {
+    text-align: center;
+    font-size: 1.1rem;
+    color: gray;
 }
