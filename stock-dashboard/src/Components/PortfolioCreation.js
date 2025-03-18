@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import { NotificationContext } from "../App";
 import "../assets/css/portfolioCreation.css";
 
 function PortfolioCreation() {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
+    const { addNotification } = useContext(NotificationContext);
     const [formData, setFormData] = useState({
         riskTolerance: "",
         investmentTypes: [],
@@ -69,7 +71,7 @@ function PortfolioCreation() {
                 await setDoc(userRef, { generatedPortfolio }, { merge: true });
     
                 console.log("✅ Final Stored Portfolio:", generatedPortfolio);
-    
+                addNotification("✅ Recommended Portfolio Generated!");
                 navigate("/");
             } else {
                 console.error("User document not found.");

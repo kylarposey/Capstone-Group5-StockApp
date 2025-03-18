@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { NotificationContext } from "../App";
 import "../assets/css/trending.css";
 
 function Trending() {
@@ -9,6 +10,7 @@ function Trending() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [user, setUser] = useState(null);
+    const { addNotification } = useContext(NotificationContext);
 
     // 🔹 Function to Fetch Market News for User's Portfolio
     const fetchMarketNews = async () => {
@@ -29,7 +31,23 @@ function Trending() {
                 { userId: user.uid }
             );
 
-            setNews(response.data.news || []);
+            if (!response.data || !response.data.news) {
+                throw new Error("Invalid response format");
+            }
+
+            const articles = response.data.news;
+            setNews(articles);
+
+            // ✅ Show floating notification
+            addNotification("📰 News Added to Inbox!", false);
+
+            // ✅ Store links in inbox with associated ticker
+            articles.slice(0, 5).forEach((article) => {
+                const ticker = article.tickers?.[0] || "Market News";
+                const message = `<b>${ticker}:</b> <a href="${article.url}" target="_blank">${article.title}</a>`;
+                addNotification(message, true);
+            });
+
         } catch (err) {
             console.error("❌ Error fetching news:", err);
             setError("Failed to load news.");

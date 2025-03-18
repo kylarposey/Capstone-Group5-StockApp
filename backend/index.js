@@ -45,7 +45,7 @@ app.get("/api/stock", async (req, res) => {
     }
 
     try {
-        const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`;
+        const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${ALPHA_VANTAGE_API_KEY}`;
         const response = await axios.get(url);
         res.json(response.data);
     } catch (error) {
