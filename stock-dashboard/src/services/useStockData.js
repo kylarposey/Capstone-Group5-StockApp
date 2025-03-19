@@ -27,7 +27,7 @@ export const useStockData = () => {
          setShowPopup(true);
       } catch (err) {
          setError(err.message);
-         console.error("Fetch Error:", err);
+         //console.error("Fetch Error:", err);
       } finally {
          setLoading(false);
       }

@@ -1,4 +1,4 @@
-import { renderHook, act, waitFor, waitForNextUpdate } from '@testing-library/react';
+import { renderHook, act, waitForNextUpdate } from '@testing-library/react';
 import { useStockData } from './useStockData';
 import { fetchStockData } from './fetchStockData';
 
@@ -69,7 +69,7 @@ describe('useStockData', () => {
       expect(fetchStockData).toHaveBeenCalledWith('AAPL', expect.any(String));
    });
 
-   /* it('should handle errors when fetching stock data', async () => {
+   it('should handle errors when fetching stock data', async () => {
       // Mock API error
       fetchStockData.mockRejectedValueOnce(new Error('Error fetching stock data'));
       
@@ -88,6 +88,6 @@ describe('useStockData', () => {
       expect(result.current.error).toBe('Error fetching stock data');
       expect(result.current.showPopup).toBe(false);
       expect(result.current.stockData).toBeNull();
-    }); */
+    });
 
 });
