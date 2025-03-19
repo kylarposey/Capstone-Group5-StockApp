@@ -4,9 +4,10 @@ import { fetchStockData } from './fetchStockData';
 // Mock axios so we don't make actual API calls
 jest.mock('axios');
 
-describe('stockService', () => {
+describe('fetchStockData', () => {
   afterEach(() => {
     jest.clearAllMocks();
+    //jest.unmock("../services/fetchStockData");
   });
 
   it('should fetch stock data successfully', async () => {

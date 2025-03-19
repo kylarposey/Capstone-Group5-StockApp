@@ -9,6 +9,7 @@ describe('useStockData', () => {
    beforeEach(() => {
       // Reset all mocks before each test
       jest.clearAllMocks();
+      //jest.unmock("../services/fetchStockData");
    });
 
    it('should initialize with default values', () => {
