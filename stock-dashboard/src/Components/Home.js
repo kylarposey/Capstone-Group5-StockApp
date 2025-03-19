@@ -2,22 +2,38 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { NotificationContext } from "../App";
+//import { NotificationContext } from "../App";
+import { useStockData } from "../services/useStockData";
 import axios from "axios";
 import "../assets/css/style.css";
 
 function Home() {
-    const [ticker, setTicker] = useState("");
+
+    const {
+        ticker,
+        setTicker,
+        stockData,
+        loading,
+        error,
+        showPopup,
+        setShowPopup,
+        fetchStockPrice
+    } = useStockData();
+   /*  const [ticker, setTicker] = useState("");
     const [stockData, setStockData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [showPopup, setShowPopup] = useState(false);
+    */
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
 
     const [position, setPosition] = useState({ x: 200, y: 150 });
     const [dragging, setDragging] = useState(false);
     const [offset, setOffset] = useState({ x: 0, y: 0 });
+ 
+
+
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -26,7 +42,7 @@ function Home() {
 
         return () => unsubscribe();
     }, []);
-
+/* 
     const fetchStockPrice = async () => {
         setLoading(true);
         setError("");
@@ -63,7 +79,7 @@ function Home() {
             setLoading(false);
         }
     };
-
+ */
     const handlePortfolioClick = () => {
         if (user) {
             navigate("/portfolioCreation");

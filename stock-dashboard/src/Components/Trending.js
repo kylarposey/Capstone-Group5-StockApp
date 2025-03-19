@@ -26,7 +26,7 @@ function Trending() {
         try {
             const response = await axios.post(
                 process.env.NODE_ENV === "development"
-                    ? "http://localhost:5000/api/trendingNews"
+                    ? "http://localhost:5001/api/trendingNews"  //use port 5001 to avoid mac local machine conflicts
                     : "https://capstone-group5-stockapp.onrender.com/api/trendingNews",
                 { userId: user.uid }
             );
