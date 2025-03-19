@@ -16,8 +16,11 @@ https://group5-capstone-project.web.app/
 
 Running tests:
 To run tests locally do the following:
-- Go the stock-dashboard directory
-- run the script "npm test"
+- Go the stock-dashboard directory.
+- To run all jest unit tests, run the command with "all" flag. "
+   Command ==> npm test -- --all
+- To show jest unit tests coverage, run the command with the "coverage" and "all" flag.
+   Comand ==> npm test -- --coverage --all
 
 GitHub Actions:
 - We've setup GitHub workflows to run automated tests.
