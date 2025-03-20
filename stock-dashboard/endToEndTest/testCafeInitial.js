@@ -19,7 +19,7 @@ test('Check the title-Initial Sample Test', async t => {
       .expect(Selector('title').innerText).eql('Stock App');
 });
 
-test('Search for a stock1', async t => {
+test('Search for a stock1 - with success', async t => {
    const tickerSearchInput = Selector('#ticker-search-input');
    const tickerSearchButton = Selector('#ticker-search-button');
    const popup = Selector('#stock-popup');
@@ -31,7 +31,7 @@ test('Search for a stock1', async t => {
       .expect(stockTicker.innerText).eql('AAPL');
 });
 
-test('Search for a stock2', async t => {
+test('Search for a stock2 - with success', async t => {
    const tickerSearchInput = Selector('#ticker-search-input');
    const tickerSearchButton = Selector('#ticker-search-button');
    const popup = Selector('#stock-popup');
@@ -41,4 +41,16 @@ test('Search for a stock2', async t => {
       .click(tickerSearchButton)
       .expect(popup.exists).ok()
       .expect(stockTicker.innerText).eql('GOOG');
+});
+
+test('Search for invalid - ticker not found', async t => {
+   const tickerSearchInput = Selector('#ticker-search-input');
+   const tickerSearchButton = Selector('#ticker-search-button');
+   const errorParagraph = Selector('.error-text');
+
+   await t
+      .typeText(tickerSearchInput, 'QWERTASDF')
+      .click(tickerSearchButton)
+      .expect(errorParagraph.exists).ok()
+      .expect(errorParagraph.innerText).eql('Invalid Ticker or API Error');
 });
