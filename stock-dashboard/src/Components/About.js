@@ -4,6 +4,7 @@ import React from 'react';
 function About() {
    return (
       <div style={{ fontSize: '18px' }}>
+         <h2>About</h2>
          <br></br>
          <span style={{ fontSize: '24px', fontWeight: 'bold' }}>Background</span>
          <br></br>

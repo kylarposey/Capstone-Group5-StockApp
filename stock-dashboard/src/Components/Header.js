@@ -86,7 +86,7 @@ function Header() {
 
     return (
         <nav className="header">
-            <Link to="/" className="title">Stock App</Link>
+            <Link to="/" className="title" id="home">Stock App</Link>
             <ul className="nav-links">
                 {user && (
                     <li className="nav-item">
@@ -111,7 +111,7 @@ function Header() {
                     </li>
                 )}
 
-                <li><Link to="/about">About</Link></li>
+                <li><Link to="/about" id="about-link">About</Link></li>
 
                 {user && (
                     <li>
