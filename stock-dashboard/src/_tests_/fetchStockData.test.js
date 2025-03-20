@@ -1,16 +1,16 @@
 import axios from 'axios';
-import { fetchStockData } from './fetchStockData';
+import { fetchStockData } from '../services/fetchStockData';
 
 // Mock axios so we don't make actual API calls
 jest.mock('axios');
 
-describe('fetchStockData', () => {
+describe('TID-006-fetchStockData', () => {
   afterEach(() => {
     jest.clearAllMocks();
     //jest.unmock("../services/fetchStockData");
   });
 
-  it('should fetch stock data successfully', async () => {
+  it('TID006.1-should fetch stock data successfully', async () => {
     // Mock successful API response
     axios.get.mockResolvedValueOnce({
       data: {
@@ -37,7 +37,7 @@ describe('fetchStockData', () => {
     });
   });
 
-  it('should throw error when API returns invalid data', async () => {
+  it('TID006.2-should throw error when API returns invalid data', async () => {
     // Mock API response with invalid data
     axios.get.mockResolvedValueOnce({
       data: { somethingElse: true }
@@ -49,7 +49,7 @@ describe('fetchStockData', () => {
       .toThrow('Invalid Ticker or API Error');
   });
 
-  it('should throw error when API call fails', async () => {
+  it('TID006.3-should throw error when API call fails', async () => {
     // Mock API call failure
     axios.get.mockRejectedValueOnce(new Error('Network error'));
 

@@ -19,3 +19,8 @@ test('Check the title', async t => {
       .expect(Selector('title').innerText).eql('Stock App');
 });
 
+test('Login Page', async t => {
+   await t
+      .expect(Selector('h1').innerText).eql('Login');
+
+});

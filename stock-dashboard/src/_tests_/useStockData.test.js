@@ -1,9 +1,9 @@
 import { renderHook, act, waitForNextUpdate } from '@testing-library/react';
-import { useStockData } from './useStockData';
-import { fetchStockData } from './fetchStockData';
+import { useStockData } from '../services/useStockData';
+import { fetchStockData } from '../services/fetchStockData';
 
 // Mock the imported fetchStockDdata
-jest.mock('./fetchStockData');
+jest.mock('../services/fetchStockData');
 
 describe('useStockData', () => {
    beforeEach(() => {
