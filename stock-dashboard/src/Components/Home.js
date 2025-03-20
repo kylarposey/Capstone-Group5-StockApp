@@ -2,23 +2,31 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { NotificationContext } from "../App";
+//import { NotificationContext } from "../App";
+import { useStockData } from "../services/useStockData";
 import axios from "axios";
 import "../assets/css/style.css";
 
 function Home() {
-    const [ticker, setTicker] = useState("");
-    const [stockData, setStockData] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
-    const [showPopup, setShowPopup] = useState(false);
+    //custom useState hooks from useStockData.js
+    const {
+        ticker,
+        setTicker,
+        stockData,
+        loading,
+        error,
+        showPopup,
+        setShowPopup,
+        fetchStockPrice
+    } = useStockData();
+   
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
 
     const [position, setPosition] = useState({ x: 200, y: 150 });
     const [dragging, setDragging] = useState(false);
     const [offset, setOffset] = useState({ x: 0, y: 0 });
-
+ 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
@@ -26,43 +34,6 @@ function Home() {
 
         return () => unsubscribe();
     }, []);
-
-    const fetchStockPrice = async () => {
-        setLoading(true);
-        setError("");
-        setStockData(null);
-        setShowPopup(false);
-
-        const API_URL = process.env.NODE_ENV === "development"
-            ? "http://localhost:5000/api/stock"
-            : "https://capstone-group5-stockapp.onrender.com/api/stock";
-
-        try {
-            const response = await axios.get(`${API_URL}?symbol=${ticker}`);
-
-            const data = response.data;
-            if (!data["Global Quote"] || !data["Global Quote"]["01. symbol"]) {
-                setError("Invalid Ticker or API Error");
-                setLoading(false);
-                return;
-            }
-
-            const stockInfo = {
-                ticker: data["Global Quote"]["01. symbol"] || "N/A",
-                price: data["Global Quote"]["05. price"] || "N/A",
-                change: data["Global Quote"]["09. change"] || "N/A",
-                changePercent: data["Global Quote"]["10. change percent"] || "N/A",
-            };
-
-            setStockData(stockInfo);
-            setShowPopup(true);
-            setLoading(false);
-        } catch (err) {
-            setError("Error fetching stock data");
-            console.error("Fetch Error:", err);
-            setLoading(false);
-        }
-    };
 
     const handlePortfolioClick = () => {
         if (user) {
@@ -121,13 +92,14 @@ function Home() {
                     {/* Search Bar */}
                     <div className="search-container">
                         <input
+                            id="ticker-search-input"
                             type="text"
                             placeholder="Enter Ticker (e.g., AAPL)"
                             value={ticker}
                             onChange={(e) => setTicker(e.target.value.toUpperCase())}
                             className="search-input"
                         />
-                        <button onClick={fetchStockPrice} className="search-button">
+                        <button id="ticker-search-button" onClick={fetchStockPrice} className="search-button">
                             Search
                         </button>
                     </div>
@@ -159,6 +131,7 @@ function Home() {
             {/* ✨ Movable Pop-up for Stock Data ✨ */}
             {showPopup && stockData && (
                 <div
+                    id="stock-popup"
                     className="popup draggable"
                     style={{ left: `${position.x}px`, top: `${position.y}px` }}
                     onMouseDown={handleMouseDown}
