@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
-//import { NotificationContext } from "../App";
 import { useStockData } from "../services/useStockData";
-import axios from "axios";
 import "../assets/css/style.css";
 
 function Home() {
@@ -49,14 +47,14 @@ function Home() {
         });
     };
 
-    const handleMouseMove = (e) => {
+    const handleMouseMove = useCallback((e) => {
         if (dragging) {
             setPosition({
                 x: e.clientX - offset.x,
                 y: e.clientY - offset.y,
             });
         }
-    };
+    }, [dragging, offset]);  
 
     const handleMouseUp = () => {
         setDragging(false);
@@ -74,7 +72,7 @@ function Home() {
             document.removeEventListener("mousemove", handleMouseMove);
             document.removeEventListener("mouseup", handleMouseUp);
         };
-    }, [dragging]);
+    }, [dragging, handleMouseMove]);
 
     return (
         <div className="home-container">
