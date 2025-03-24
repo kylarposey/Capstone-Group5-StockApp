@@ -1,0 +1,67 @@
+{
+  "investmentCategories": {
+    "stocks": {
+      "type": "stocks",
+      "symbols": [
+        "AAPL", "TSLA", "NVDA", "MSFT", "GOOGL", "AMD", "META", "AMZN", "SHOP", "SNOW",
+        "UBER", "RBLX", "SQ", "NET", "CRWD", "DDOG", "MDB", "ZS", "DOCU", "ASAN",
+        "COIN", "MARA", "RIOT", "HIVE", "SI", "BITF", "HUT", "GBTC", "ETHE", "MSTR",
+        "KO", "JNJ", "PG", "MCD", "PEP", "WMT", "TGT", "HD", "VZ", "T", "D", "SO", "DUK",
+        "XEL", "AEP", "ED", "GIS", "KMB", "CL", "COST", "LOW", "USB", "PNC", "TFC", "LMT", "RTX",
+        "O", "VNQ", "SPG", "PLD", "WPC", "IRM", "EQR", "AVB", "MAA", "PEAK", "BXP", "SLG",
+        "CPT", "ARE", "MPW", "VICI", "STAG", "EXR", "PSA", "CUBE",
+        "XOM", "CVX", "COP", "PXD", "OXY", "SLB", "EOG", "HES", "MPC", "PSX", "VLO", "DVN", "FANG",
+        "MO", "PM", "BTI", "DEO", "STZ", "BUD", "SAM", "CCU", "TAP", "BF.B",
+        "LMT", "RTX", "NOC", "GD", "BA", "TXT", "HII", "CW", "AXON", "LHX", "HEI",
+        "LVS", "WYNN", "MGM", "CZR", "BYD", "DKNG", "PENN", "BALY", "RSI", "MCRI",
+        "F", "GM", "RIVN", "LCID", "NIO", "XPEV", "FSR", "TSLA", "STLA",
+        "MRNA", "BNTX", "REGN", "VRTX", "BIIB", "LLY", "PFE", "ABBV", "GILD", "BMY", "AMGN",
+        "JPM", "BAC", "WFC", "C", "MS", "GS", "USB", "PNC", "TFC", "SCHW", "AMP", "RY", "TD", "BNS",
+        "CAT", "DE", "EMR", "HON", "GE", "NUE", "DOW", "X", "FCX", "LIN", "ETN", "CMI"
+      ]
+    },
+    "etfs": {
+      "type": "etfs",
+      "symbols": [
+        "VOO", "SPY", "IVV", "VTI", "SCHD", "VYM", "DIA", "VIG", "FNDX",
+        "QQQ", "ARKK", "ARKW", "VGT", "XLC", "FTEC", "XLK", "IYW", "FDN",
+        "JEPI", "JEPQ", "DVY", "NOBL", "VYM", "SPYD", "SDY", "HDV", "SCHY",
+        "XLE", "VDE", "OIH", "IEO", "AMLP", "USO", "BNO",
+        "VICEX", "YOLO",
+        "ITA", "XAR", "DFEN", "PPA", "FITE",
+        "BJK", "BETZ", "JETS",
+        "BITO", "BLOK", "DAPP", "BITQ", "LEGR", "GBTC", "ETHE", "WGMI",
+        "XLV", "IBB", "VHT", "XBI", "ARKG",
+        "VXUS", "VEA", "EFA", "EEM", "VWO", "EWZ", "FXI", "INDA",
+        "VNQ", "SCHH", "XLRE", "IYR", "REZ", "FREL", "RWR", "IYR",
+        "LIT", "TAN", "PBW", "ICLN", "QCLN",
+        "XLI", "PAVE", "VIS", "IGE", "IFRA"
+      ]
+    },
+    "crypto": {
+      "type": "crypto",
+      "symbols": ["BTC", "ETH", "SOL", "ADA", "XRP", "DOT", "MATIC", "AVAX", "LTC", "DOGE", "UNI", "LINK"]
+    }
+  },
+  "riskToleranceFilter": {
+    "Conservative": [
+      "KO", "JNJ", "PG", "MCD", "PEP", "WMT", "VNQ", "SCHD", "D", "SO", "DUK", "XEL", "AEP", "ED",
+      "USB", "PNC", "TFC", "LMT", "RTX", "NOBL", "VYM", "SPYD", "XLV", "VNQ", "XLRE"
+    ],
+    "Moderate": [
+      "XOM", "CVX", "RTX", "NOC", "GD", "DE", "CAT", "HON", "VICI", "ARE", "BMY", "GS", "MS", "JETS",
+      "ITA", "XAR", "DFEN", "PPA", "XLI", "PAVE", "IGE", "IBB", "VHT", "VXUS", "VEA", "EFA"
+    ],
+    "Aggressive": [
+      "AAPL", "TSLA", "NVDA", "MSFT", "GOOGL", "COIN", "MARA", "RIOT", "SHOP", "SNOW", "RBLX", "SQ",
+      "ARKK", "ARKW", "VGT", "XLK", "LIT", "TAN", "PBW", "ICLN", "BITO", "BLOK", "DAPP", "XLC"
+    ]
+  },
+  "exclusionMap": {
+    "Oil & Gas": ["XOM", "CVX", "COP", "PXD", "OXY", "SLB", "EOG"],
+    "Tobacco & Alcohol": ["MO", "PM", "BTI", "DEO", "STZ"],
+    "Weapons & Defense": ["LMT", "RTX", "NOC", "GD"],
+    "Gambling & Casinos": ["LVS", "WYNN", "MGM", "CZR"],
+    "Crypto & Blockchain": ["COIN", "MARA", "RIOT", "BITO", "BLOK"]
+  }
+}

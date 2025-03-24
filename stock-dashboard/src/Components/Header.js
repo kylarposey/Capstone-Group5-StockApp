@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
@@ -13,8 +13,9 @@ function Header() {
     const [showPopup, setShowPopup] = useState(false);
     const [showInbox, setShowInbox] = useState(false);
     const {notifications, addNotification, removeNotification } = useContext(NotificationContext);
-    const inboxRef = useRef(null);
+    //const inboxRef = useRef(null);
     const popupRef = useRef(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -27,6 +28,7 @@ function Header() {
         });
 
         return () => unsubscribe();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fetchPortfolio = async () => {
@@ -84,6 +86,18 @@ function Header() {
         };
     }, [showPopup]);
 
+    //
+    const handleSignOut = async() => {
+        try {
+            await signOut(auth);
+            setUser(null);
+            //addNotification("🔓 Successfully Logged Out!", false);
+            navigate("/");
+        } catch (error) {
+            console.error("Error signing out:", error);
+        }
+    };
+
     return (
         <nav className="header">
             <Link to="/" className="title" id="home">Stock App</Link>
@@ -121,11 +135,13 @@ function Header() {
                     </li>
                 )}
                 {user ? (
-                    <li><button onClick={() => signOut(auth)} className="nav-link-button">Logout</button></li>
+                    <li><button onClick={handleSignOut} className="nav-link-button">Logout</button></li>
                 ) : (
                     <>
-                        <li><Link to="/login">Login</Link></li>
-                        <li><Link to="/newUser">Register</Link></li>
+                       {/*  <li><Link to="/login">Login</Link></li>
+                        <li><Link to="/newUser">Register</Link></li> */}
+                        <li><Link to="/signUpSignIn">Signup or Sign in with Google</Link></li>
+
                     </>
                 )}
             </ul>

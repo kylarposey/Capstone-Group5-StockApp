@@ -57,8 +57,12 @@ function PortfolioCreation() {
     
             if (userDoc.exists()) {
                 await setDoc(userRef, { portfolio: formData }, { merge: true });
+                const backendURL =process.env.NODE_ENV === "development"
+                    ? "http://localhost:5001/api/generatePortfolio"  // Local backend during development
+                    : "https://capstone-group5-stockapp.onrender.com/api/generatePortfolio";  // Production backend
+
     
-                const response = await fetch("https://capstone-group5-stockapp.onrender.com/api/generatePortfolio", {
+                const response = await fetch(backendURL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ userId: user.uid, preferences: formData }),

@@ -1,0 +1,5 @@
+# Ensure ignore JSON data files during push to github
+#/data/
+/rawData/
+node_modules/
+.DS_Store
