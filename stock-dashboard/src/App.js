@@ -7,7 +7,7 @@ import NewUser from "./Components/NewUser"; */
 import Header from "./Components/Header";
 import Home from "./Components/Home";
 import Footer from "./Components/Footer";
-import Trending from "./components/Trending";
+import Trending from "./Components/Trending";
 import PortfolioCreation from "./Components/PortfolioCreation";
 import "./assets/css/style.css";
 import "bootstrap/dist/css/bootstrap.min.css";

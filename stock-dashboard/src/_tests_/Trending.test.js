@@ -1,3 +1,4 @@
+// ✅ Mock App.js first
 jest.mock('../App', () => {
     const React = require('react');
     return {
@@ -30,7 +31,7 @@ jest.mock('../App', () => {
     it('always displays the page header', () => {
       onAuthStateChanged.mockImplementation((_, callback) => {
         callback(null);
-        return () => {};
+        return () => {}; // ✅ fake unsubscribe function
       });
   
       render(<Trending />);
@@ -42,7 +43,7 @@ jest.mock('../App', () => {
   
       onAuthStateChanged.mockImplementationOnce((_, callback) => {
         callback(mockUser);
-        return () => {};
+        return () => {}; // ✅ prevent unsubscribe error
       });
   
       axios.post.mockResolvedValueOnce({
@@ -68,7 +69,7 @@ jest.mock('../App', () => {
     it('shows loading indicator while fetching', () => {
       onAuthStateChanged.mockImplementation((_, callback) => {
         callback({ uid: '999' });
-        return () => {};
+        return () => {}; // ✅ prevent unsubscribe error
       });
   
       axios.post.mockImplementation(() => new Promise(() => {}));
