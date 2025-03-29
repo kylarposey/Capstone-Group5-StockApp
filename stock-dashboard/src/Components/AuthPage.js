@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, googleProvider, db, doc, getDoc, setDoc, signInWithPopup } from "../firebase";
+import "../assets/css/AuthPage.css"; // Import the CSS file for styling
+import secImage from "../assets/css/buildings.png"; // Import the background image
+import stonksImage from "../assets/css/stonks.jpg"; // Import the stonks image
 
 function AuthPage() {
   const navigate = useNavigate();
@@ -37,21 +40,52 @@ function AuthPage() {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
-      <div className="bg-white p-4 rounded shadow text-center" style={{ width: '30rem' }}>
-        <h2 className="h4 mb-4">Signup or SignIn with Google</h2>
-        <button
-          onClick={handleGoogleAuth}
-          disabled={isLoading}
-          className="d-flex align-items-center justify-content-center w-100 p-3 bg-white border border-secondary rounded shadow-sm hover-shadow-sm disabled-opacity-50"
-        >
-          <img
-            className="google-logo"
-            src="https://developers.google.com/identity/images/g-logo.png"
-            alt="Google Logo"
-          />
-          {isLoading ? "Processing..." : "Continue with Google"}
-        </button>
+<div
+      className="auth-container"
+      style={{
+        backgroundImage: `url(${secImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <div className="auth-content d-flex bg-white p-4 rounded shadow" style={{ width: "60rem" }}>
+        {/* Left Section with Image */}
+        <div className="left-section d-flex align-items-center justify-content-center">
+          <img src={stonksImage} alt="Stonks" className="stonks-image" />
+        </div>
+
+        {/* Center Section with Google Auth */}
+        <div className="center-section text-center mx-4">
+          <h2 className="h4 mb-4">Login/Register using your Google account</h2>
+          <button
+            onClick={handleGoogleAuth}
+            disabled={isLoading}
+            className="d-flex align-items-center justify-content-center w-100 p-3 bg-white border border-secondary rounded shadow-sm hover-shadow-sm disabled-opacity-50"
+          >
+            <img
+              className="google-logo"
+              src="https://developers.google.com/identity/images/g-logo.png"
+              alt="Google Logo"
+            />
+            {isLoading ? "Processing..." : "Continue with Google"}
+          </button>
+        </div>
+
+        {/* Right Section with Bullet Points */}
+        <div className="right-section">
+          <h3>Why Make an Account?</h3>
+          <ul>
+            <li>Track your portfolio with ease</li>
+            <li>Get real-time stock updates</li>
+            <li>Learn about investing in the stock market</li>
+            <li>Stay informed with curated news</li>
+          </ul>
+        </div>
       </div>
     </div>
   );
