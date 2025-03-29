@@ -140,7 +140,7 @@ function Header() {
                     <>
                        {/*  <li><Link to="/login">Login</Link></li>
                         <li><Link to="/newUser">Register</Link></li> */}
-                        <li><Link to="/signUpSignIn">Signup or Sign in with Google</Link></li>
+                        <li><Link to="/signUpSignIn">Login/Register</Link></li>
 
                     </>
                 )}
