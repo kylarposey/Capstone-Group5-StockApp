@@ -3,8 +3,11 @@
 Group Members: Kylar Posey / Kyle Rivera / Paul Negrido
 
 Video Link:
+Stage2 - https://youtu.be/eyHaKMJNorg (Current Stage)
+
+Previous Stage(s) video links:
 Stage1 - https://youtu.be/-7ZLHhF5aPQ
-Stage2 - TBD
+
 
 Local host run - To run the code locally do the following: 
 Front End:
