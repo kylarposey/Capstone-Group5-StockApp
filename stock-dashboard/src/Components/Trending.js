@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback, useRef } from "react";
 import axios from "axios";
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
@@ -12,16 +12,21 @@ function Trending() {
     const [user, setUser] = useState(null);
     const { addNotification } = useContext(NotificationContext);
 
-    // 🔹 Function to Fetch Market News for User's Portfolio
-    const fetchMarketNews = async () => {
+    // Ref to track if notifications were already added
+    const fetchedArticlesRef = useRef(new Set());
+
+    // Function to Fetch Market News for User's Portfolio
+    const fetchMarketNews =  useCallback(async () => {
+        if (!user || fetchedArticlesRef.current.has(user.uid)) return; // Avoid duplicate fetching
+
         setLoading(true);
         setError("");
 
-        if (!user) {
+     /*    if (!user) {
             setError("User not logged in.");
             setLoading(false);
             return;
-        }
+        } */
 
         try {
             const response = await axios.post(
@@ -38,10 +43,23 @@ function Trending() {
             const articles = response.data.news;
             setNews(articles);
 
-            // ✅ Show floating notification
-            addNotification("📰 News Added to Inbox!", false);
+            // Prevent duplicate notifications per session
+            if (!fetchedArticlesRef.current.has(user.uid)) {
+                addNotification("📰 News Added to Inbox!", false);
+                
+                articles.slice(0, 5).forEach((article) => {
+                    const ticker = article.tickers?.[0] || "Market News";
+                    const message = `<b>${ticker}:</b> <a href="${article.url}" target="_blank">${article.title}</a>`;
+                    addNotification(message, true);
+                });
 
-            // ✅ Store links in inbox with associated ticker
+                fetchedArticlesRef.current.add(user.uid); // Mark articles as fetched
+            }
+
+            /* // Show floating notification
+            addNotification(" News Added to Inbox!", false); */
+
+            // Store links in inbox with associated ticker
             articles.slice(0, 5).forEach((article) => {
                 const ticker = article.tickers?.[0] || "Market News";
                 const message = `<b>${ticker}:</b> <a href="${article.url}" target="_blank">${article.title}</a>`;
@@ -54,7 +72,7 @@ function Trending() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [user, addNotification]);
 
     // 🔹 Ensure `fetchMarketNews` runs when user logs in
     useEffect(() => {
@@ -72,7 +90,11 @@ function Trending() {
         if (user) {
             fetchMarketNews();
         }
-    }, [user]);
+        else{
+            setLoading(false);
+            setError("Please login to see relevant market news.");
+        }
+    }, [user, fetchMarketNews]);
 
     return (
         <div className="trending-container">

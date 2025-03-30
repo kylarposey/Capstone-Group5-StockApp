@@ -5,14 +5,14 @@ import { fetchStockData } from '../services/fetchStockData';
 // Mock the imported fetchStockDdata
 jest.mock('../services/fetchStockData');
 
-describe('useStockData', () => {
+describe('Use Stock Data', () => {
    beforeEach(() => {
       // Reset all mocks before each test
       jest.clearAllMocks();
       //jest.unmock("../services/fetchStockData");
    });
 
-   it('should initialize with default values', () => {
+   it('TID004-Should initialize with default values', () => {
       const { result } = renderHook(() => useStockData());
       
       expect(result.current.ticker).toBe('');
@@ -22,7 +22,7 @@ describe('useStockData', () => {
       expect(result.current.showPopup).toBe(false);
    });
 
-   it('should update ticker when setTicker is called', () => {
+   it('TID005-Should update ticker when setTicker is called', () => {
       const { result } = renderHook(() => useStockData());
       
       act(() => {
@@ -33,7 +33,7 @@ describe('useStockData', () => {
    });
 
 
-   it('should fetch stock data successfully', async () => {
+   it('TID006-Should use the fetched then display it', async () => {
       // Mock successful API fetch
       fetchStockData.mockResolvedValueOnce({
       ticker: 'AAPL',
@@ -46,7 +46,7 @@ describe('useStockData', () => {
       
       // Set ticker
       act(() => {
-      result.current.setTicker('AAPL');
+         result.current.setTicker('AAPL');
       });
       
       // Call the fetch function
@@ -57,10 +57,10 @@ describe('useStockData', () => {
       // Check the final state
       expect(result.current.loading).toBe(false);
       expect(result.current.stockData).toEqual({
-      ticker: 'AAPL',
-      price: '150.25',
-      change: '+1.25',
-      changePercent: '+0.84%'
+         ticker: 'AAPL',
+         price: '150.25',
+         change: '+1.25',
+         changePercent: '+0.84%'
       });
       expect(result.current.showPopup).toBe(true);
       expect(result.current.error).toBe('');
@@ -70,7 +70,7 @@ describe('useStockData', () => {
       expect(fetchStockData).toHaveBeenCalledWith('AAPL', expect.any(String));
    });
 
-   it('should handle errors when fetching stock data', async () => {
+   it('TID007-Should handle errors when an invalid stock is entered', async () => {
       // Mock API error
       fetchStockData.mockRejectedValueOnce(new Error('Error fetching stock data'));
       

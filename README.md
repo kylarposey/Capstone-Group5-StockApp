@@ -3,8 +3,11 @@
 Group Members: Kylar Posey / Kyle Rivera / Paul Negrido
 
 Video Link:
+Stage2 - https://youtu.be/eyHaKMJNorg (Current Stage)
+
+Previous Stage(s) video links:
 Stage1 - https://youtu.be/-7ZLHhF5aPQ
-Stage2 - TBD
+
 
 Local host run - To run the code locally do the following: 
 Front End:
@@ -27,14 +30,20 @@ To run tests locally do the following:
 - To run all jest unit tests, run the command below:
    Command ==> npm test
 - To show jest unit tests coverage, run the command below:
-   Comand ==> npm test -- --coverage
+   Comand ==> npm test -- --coverage --watchAll=false --verbose
 
 TestCafe Testing (End-to-End):
 - Go the stock-dashboard directory.
 - Run the command: testcafe < installed browser of choice > ./testCafeTest/< filename of test >
    Example: testcafe chrome ./testCafeTest/testCafeInitial.js
 
-
 GitHub Actions:
 - We've setup GitHub workflows to run automated tests.
-- Pull requests automatically trigger running our tests and shown in Github Actions.
+- Pull requests automatically trigger running our unit tests and shown in Github Actions.
+
+Testing and Security Documentation - Stage 2:
+Link to both documentation below:
+https://github.com/kylarposey/Capstone-Group5-StockApp/tree/main/Documentation
+
+- Testing-Strategy documentation => /documentation/Testing-Strategy.pdf
+- Login-Security documentation => /documentation/Login-Security.pd
