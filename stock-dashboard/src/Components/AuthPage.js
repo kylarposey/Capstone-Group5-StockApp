@@ -63,6 +63,7 @@ function AuthPage() {
         <div className="center-section text-center mx-4">
           <h2 className="h4 mb-4">Login/Register using your Google account</h2>
           <button
+            id="google-auth-button"
             onClick={handleGoogleAuth}
             disabled={isLoading}
             className="d-flex align-items-center justify-content-center w-100 p-3 bg-white border border-secondary rounded shadow-sm hover-shadow-sm disabled-opacity-50"

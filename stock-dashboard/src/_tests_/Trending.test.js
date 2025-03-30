@@ -28,7 +28,7 @@ jest.mock('../App', () => {
       jest.clearAllMocks();
     });
   
-    it('always displays the page header', () => {
+    it('TID008-Always displays the page header', () => {
       onAuthStateChanged.mockImplementation((_, callback) => {
         callback(null);
         return () => {}; // ✅ fake unsubscribe function
@@ -38,7 +38,7 @@ jest.mock('../App', () => {
       expect(screen.getByText('Market Trends & News')).toBeInTheDocument();
     });
   
-    it('renders news from API when user is logged in', async () => {
+    it('TID009-Renders news from API when user is logged in', async () => {
       const mockUser = { uid: '123' };
   
       onAuthStateChanged.mockImplementationOnce((_, callback) => {
@@ -66,7 +66,7 @@ jest.mock('../App', () => {
       expect(screen.getByText('Read More')).toHaveAttribute('href', 'https://example.com/news');
     });
   
-    it('shows loading indicator while fetching', () => {
+    it('TID010-Shows loading indicator while fetching', () => {
       onAuthStateChanged.mockImplementation((_, callback) => {
         callback({ uid: '999' });
         return () => {}; // ✅ prevent unsubscribe error

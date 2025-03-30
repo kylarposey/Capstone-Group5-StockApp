@@ -107,7 +107,8 @@ function Home() {
                 <div className="card card-green">
                     <h2>Portfolio</h2>
                     <p>Create and Manage your investments.</p>
-                    <button 
+                    <button
+                        id="portfolioFeature-button" 
                         onClick={handlePortfolioClick} 
                         className={`card-button ${!user ? "disabled-button" : ""}`} 
                         disabled={!user}
@@ -120,7 +121,7 @@ function Home() {
                 <div className="card card-blue">
                     <h2>Market Trends</h2>
                     <p>Track the latest market movements and news.</p>
-                    <Link to="/trends" className="card-button">
+                    <Link to="/trends" className="card-button" id ="trends-link">
                         Explore Trends
                     </Link>
                 </div>

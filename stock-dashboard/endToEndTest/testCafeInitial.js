@@ -1,4 +1,4 @@
-import { Selector, ClientFunction } from 'testcafe';
+import { Selector, ClientFunction, Role } from 'testcafe';
 
 //Localhost testing
 fixture('Landing Page')
@@ -49,17 +49,6 @@ test('Search for invalid - ticker not found', async t => {
       .expect(errorParagraph.innerText).eql('Invalid Ticker or API Error');
 });
 
-/* test('Navigate to About page', async t => {
-   // Select the About link using the id
-   const aboutLink = Selector('#about-link');
-
-   // Click the About link
-   await t
-      .click(aboutLink)
-      .expect(t.eval); // Update the selector to match an element on the About page
-}); */
-
-
 test('Navigate to About page', async t => {
    // Select the About link using the id
    
@@ -80,3 +69,25 @@ test('Navigate back to Home page', async t => {
       .click(homeLink)
       .expect(getPageUrl()).eql('http://localhost:3000/');
 });
+
+test('Navigate to Login page', async t => {
+   // Select the About link using the id
+   const loginRegisterLink = Selector('#login-register-link');
+   //console.log('loginRegisterLink', loginRegisterLink);
+
+   // Click the About link
+   await t
+      .click(loginRegisterLink)
+      .expect(getPageUrl()).contains('loginRegister');
+});
+
+test('Navigate back to Home page', async t => {
+   // Select the About link using the id
+   const homeLink = Selector('#home');
+
+   // Click the About link
+   await t
+      .click(homeLink)
+      .expect(getPageUrl()).eql('http://localhost:3000/');
+});
+
