@@ -12,7 +12,6 @@ export const useStockData = () => {
       setLoading(true);
       setError("");
       setStockData(null);
-      setShowPopup(false);
 
       //The URL depends on when the app is run locally with npm start(development) and uses port 5001
       //Or from the production version hosted on firebase which uses the actual url of the backend hosted on render.com
@@ -24,10 +23,8 @@ export const useStockData = () => {
       try {
          const stockInfo = await fetchStockData(ticker, API_URL);
          setStockData(stockInfo);
-         setShowPopup(true);
       } catch (err) {
          setError(err.message);
-         //console.error("Fetch Error:", err);
       } finally {
          setLoading(false);
       }

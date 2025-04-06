@@ -284,7 +284,7 @@ body {
 /*            POP-UP              */
 /* ============================== */
 .popup {
-    position: absolute;
+    position: fixed;
     background: white;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
     padding: 20px;

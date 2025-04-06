@@ -2,8 +2,6 @@ import React, { useState, createContext } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import About from "./Components/About";
 import AuthPage from "./Components/AuthPage";
-/* import LoginPage from "./Components/LoginPage";
-import NewUser from "./Components/NewUser"; */
 import Header from "./Components/Header";
 import Home from "./Components/Home";
 import Footer from "./Components/Footer";
@@ -47,9 +45,6 @@ function App() {
                         <Route path="/" element={<Home />} />
                         <Route path="/about" element={<About />} />
                         <Route path="/loginRegister" element={<AuthPage />} />
-
-                        {/* <Route path="/newUser" element={<NewUser />} />
-                        <Route path="/login" element={<LoginPage />} /> */}
                         <Route path="/trends" element={<Trending />} />
                         <Route path="/PortfolioCreation" element={<PortfolioCreation />} />
                     </Routes>
