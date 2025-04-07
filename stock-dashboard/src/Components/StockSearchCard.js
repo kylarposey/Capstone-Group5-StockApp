@@ -2,8 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useStockData } from "../services/useStockData";
 import StockPopup from "./StockPopUp";
 
-
-
 function StockSearchCard() {
 
    const {
@@ -15,7 +13,6 @@ function StockSearchCard() {
       fetchStockPrice,
    } = useStockData();
 
-   
    const [showPopup, setShowPopup] = useState(false);
    const [position, setPosition] = useState({ x: 200, y: 200 });
    const [dragging, setDragging] = useState(false);
@@ -65,6 +62,7 @@ function StockSearchCard() {
       setShowPopup(true); // Show the popup after fetching stock data
    };
 
+
    return (
       <>
          <div className="card card-yellow">
@@ -73,22 +71,23 @@ function StockSearchCard() {
             
             {/* Search Bar */}
             <div className="search-container">
-                  <input
-                     id="ticker-search-input"
-                     type="text"
-                     placeholder="Enter Ticker (e.g., AAPL)"
-                     value={ticker}
-                     onChange={(e) => setTicker(e.target.value.toUpperCase())}
-                     onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                        handleSearch(); // Trigger the search when Enter is pressed
-                        }
-                     }}
-                     className="search-input"
-                  />
-                  <button id="ticker-search-button" onClick={handleSearch} className="search-button">
-                     Search
-                  </button>
+               <input
+                  id="ticker-search-input"
+                  type="text"
+                  placeholder="Enter Ticker (e.g., AAPL)"
+                  value={ticker}
+                  onChange={(e) => setTicker(e.target.value.toUpperCase())}
+                  onKeyDown={(e) => {
+                     if (e.key === "Enter") {
+                     handleSearch(); // Trigger the search when Enter is pressed
+                     }
+                  }}
+                  className="search-input"
+               />
+               <button id="ticker-search-button" onClick={handleSearch} className="search-button">
+                  Search
+               </button>
+               
             </div>
             {loading && <p className="loading-text">Fetching stock data...</p>}
             {error && <p className="error-text">{error}</p>}
@@ -98,12 +97,12 @@ function StockSearchCard() {
          {/* Stock Popup */}
          {/* Only show if showPopup is true and stockData is available */}
          {showPopup && stockData && (
-               <StockPopup
-                  stockData={stockData}
-                  position={position}
-                  handleMouseDown={handleMouseDown}
-                  setShowPopup={setShowPopup}
-               />
+            <StockPopup
+               stockData={stockData}
+               position={position}
+               handleMouseDown={handleMouseDown}
+               setShowPopup={setShowPopup}
+            />
          )}
       </>
    );

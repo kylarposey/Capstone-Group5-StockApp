@@ -7,6 +7,7 @@ import Home from "./Components/Home";
 import Footer from "./Components/Footer";
 import Trending from "./Components/Trending";
 import PortfolioCreation from "./Components/PortfolioCreation";
+import StockDetailPage from "./Components/StockDetailPage";
 import "./assets/css/style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -47,6 +48,8 @@ function App() {
                         <Route path="/loginRegister" element={<AuthPage />} />
                         <Route path="/trends" element={<Trending />} />
                         <Route path="/PortfolioCreation" element={<PortfolioCreation />} />
+                        <Route path="/stockDetails" element={<StockDetailPage />} />
+                        <Route path="*" element={<div>404 Not Found</div>} />
                     </Routes>
                 </main>
                 <Footer />

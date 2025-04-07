@@ -102,47 +102,45 @@ function Header() {
         <nav className="header">
             <Link to="/" className="title" id="home">Stock App</Link>
             <ul className="nav-links">
-                {user && (
-                    <li className="nav-item">
-                        <button className="nav-link-button" onClick={() => setShowInbox(!showInbox)}>
-                            Inbox {notifications.length > 0 && `(${notifications.length})`}
-                        </button>
-                        {showInbox && (
-                            <div className="inbox-dropdown">
-                                <h3>Inbox</h3>
-                                {notifications.length > 0 ? (
-                                    notifications.map((note) => (
-                                        <div key={note.id} className="inbox-item">
-                                            <span dangerouslySetInnerHTML={{ __html: note.message }} />
-                                            <button className="delete-btn" onClick={() => removeNotification(note.id)}>✖</button>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <p className="inbox-empty">No notifications yet.</p>
-                                )}
-                            </div>
-                        )}
-                    </li>
-                )}
-
                 <li><Link to="/about" id="about-link">About</Link></li>
 
-                {user && (
-                    <li>
-                        <button className="nav-link-button" onClick={handlePortfolioClick}>
-                            Portfolio
-                        </button>
-                    </li>
-                )}
+                {/**Toggle visiblity of logged in vs non-logged in components*/}
                 {user ? (
-                    <li><button onClick={handleSignOut} className="nav-link-button">Logout</button></li>
-                ) : (
                     <>
-                       {/*  <li><Link to="/login">Login</Link></li>
-                        <li><Link to="/newUser">Register</Link></li> */}
-                        <li><Link to="/loginRegister" id="login-register-link">Login/Register</Link></li>
-
+                        <li className="nav-item">
+                            <button className="nav-link-button" onClick={() => setShowInbox(!showInbox)}>
+                                Inbox {notifications.length > 0 && `(${notifications.length})`}
+                            </button>
+                            {showInbox && (
+                                <div className="inbox-dropdown">
+                                    <h3>Inbox</h3>
+                                    {notifications.length > 0 ? (
+                                        notifications.map((note) => (
+                                            <div key={note.id} className="inbox-item">
+                                                <span dangerouslySetInnerHTML={{ __html: note.message }} />
+                                                <button className="delete-btn" onClick={() => removeNotification(note.id)}>✖</button>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className="inbox-empty">No notifications yet.</p>
+                                    )}
+                                </div>
+                            )}
+                        </li>
+                        <li>
+                            <button className="nav-link-button" onClick={handlePortfolioClick}>
+                                Portfolio
+                            </button>
+                        </li>
+                        <li>
+                            <Link to="/stockDetails" className="nav-link-button" id="trends-link">Detailed Stock Info</Link>
+                        </li>
+                        <li>
+                            <button onClick={handleSignOut} className="nav-link-button">Logout</button>
+                        </li>
                     </>
+                ) : (
+                    <li><Link to="/loginRegister" id="login-register-link">Login/Register</Link></li>
                 )}
             </ul>
 
