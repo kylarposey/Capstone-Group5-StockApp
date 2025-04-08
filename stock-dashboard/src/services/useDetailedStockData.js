@@ -1,28 +1,26 @@
 import { useState } from 'react';
-import { fetchStockData } from './fetchStockData';
+import { fetchDetailedStockData} from './fetchDetailedStockData';
 
-export const useStockData = () => {
+export const useDetailedStockData = () => {
    const [ticker, setTicker] = useState("");
-   const [stockData, setStockData] = useState(null);
-   const [loading, setLoading] = useState(false);
+   const [detailedStockData, setDetailedStockData] = useState(null);
    const [error, setError] = useState("");
-   const [showPopup, setShowPopup] = useState(false);
+   const [loading, setLoading] = useState(false);
 
-   const fetchStockPrice = async () => {
+   const fetchData = async () => {
       setLoading(true);
       setError("");
-      setStockData(null);
-
+      
       //The URL depends on when the app is run locally with npm start(development) and uses port 5001
       //Or from the production version hosted on firebase which uses the actual url of the backend hosted on render.com
       //Both will call the Alpha Advantage stock endpoint
       const API_URL = process.env.NODE_ENV === "development"
-         ? "http://localhost:5001/api/stock"
-         : "https://capstone-group5-stockapp.onrender.com/api/stock";
+         ? "http://localhost:5001/api/stockDetails"
+         : "https://capstone-group5-stockapp.onrender.com/api/stockDetails";
 
       try {
-         const stockInfo = await fetchStockData(ticker, API_URL);
-         setStockData(stockInfo);
+         const apiDetailedData = await fetchDetailedStockData(ticker, API_URL);
+         setDetailedStockData(apiDetailedData);
       } catch (err) {
          setError(err.message);
       } finally {
@@ -33,11 +31,8 @@ export const useStockData = () => {
    return {
       ticker,
       setTicker,
-      stockData,
-      loading,
+      detailedStockData,
       error,
-      showPopup,
-      setShowPopup,
-      fetchStockPrice
+      fetchData
    };
 };

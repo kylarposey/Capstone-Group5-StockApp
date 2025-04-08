@@ -8,7 +8,7 @@ Stage2 - https://youtu.be/eyHaKMJNorg (Current Stage)
 Previous Stage(s) video links:
 Stage1 - https://youtu.be/-7ZLHhF5aPQ
 
-
+ 
 Local host run - To run the code locally do the following: 
 Front End:
 - Go to the stock-dashboard directory.

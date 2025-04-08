@@ -90,38 +90,6 @@ function AuthPage() {
       </div>
     </div>
   );
-
-  /* return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80">
-        <h2 className="text-2xl font-semibold mb-4">Continue with Google</h2>
-        <button 
-          onClick={handleGoogleAuth} 
-          disabled={isLoading}
-          className="flex items-center justify-center w-full p-3 bg-white border border-gray-300 rounded-lg shadow-sm hover:shadow-md transition disabled:opacity-50"
-        >
-          <img src="https://developers.google.com/identity/images/g-logo.png" 
-               alt="Google Logo" 
-               className="w-6 h-6 mr-3"
-          />
-          {isLoading ? "Processing..." : "Continue with Google"}
-        </button>
-      </div> 
-    </div>
-  );
- */
-  /* return (
-    <div className="card-container">
-      <h2>Welcome to the App</h2>
-      <button 
-        onClick={handleGoogleAuth} 
-        disabled={isLoading}
-        className="google-auth-button"
-      >
-        {isLoading ? "Processing..." : "Continue with Google"}
-      </button>
-    </div>
-  ); */
 }
 
 export default AuthPage;

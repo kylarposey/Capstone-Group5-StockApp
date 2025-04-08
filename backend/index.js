@@ -36,6 +36,11 @@ app.options("*", (req, res) => {
 
 const ALPHA_VANTAGE_API_KEY = process.env.REACT_APP_ALPHA_VANTAGE_API_KEY;
 
+//Routes
+const stockDetailsRoute = require("./routes/stockDetails");
+app.use("/api", stockDetailsRoute);
+
+
 app.get("/", (req, res) => {
     res.send("🚀 Backend is running! API available at /api/stock?symbol=AAPL");
 });
