@@ -235,7 +235,7 @@ app.post("/api/trendingNews", async (req, res) => {
             ...(portfolio.crypto || [])
         ];
 
-        tickers = [...new Set(tickers)].slice(0, 6);
+        tickers = [...new Set(tickers)].slice(0, 5);
         console.log("Fetching news for tickers:", tickers);
 
         let newsArticles = [];
@@ -282,7 +282,7 @@ app.post("/api/trendingNews", async (req, res) => {
                     });
 
                     if (response.data && response.data.feed) {
-                        newsArticles.push(...response.data.feed.slice(0, 3));
+                        newsArticles.push(...response.data.feed.slice(0, 2));
                     }
                 } catch (error) {
                     console.error(`🔥 Error fetching category news for ${category}:`, error.message);
