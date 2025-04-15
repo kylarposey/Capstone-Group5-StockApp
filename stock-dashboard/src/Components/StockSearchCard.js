@@ -90,7 +90,11 @@ function StockSearchCard() {
                
             </div>
             {loading && <p className="loading-text">Fetching stock data...</p>}
-            {error && <p className="error-text">{error}</p>}
+            {error && (
+         <div className="error-banner">
+      <span role="img" aria-label="error">❌</span> {error}
+   </div>
+)}
             
          </div>
 

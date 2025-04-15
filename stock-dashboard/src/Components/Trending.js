@@ -41,7 +41,9 @@ function Trending() {
                 articles.slice(0, 5).forEach((article) => {
                     const ticker = article.tickers?.[0] || "Market News";
                     const message = `<b>${ticker}:</b> <a href="${article.url}" target="_blank">${article.title}</a>`;
-                    addNotification(message, true);
+                    const id = `${ticker}-${article.url}`; 
+                
+                    addNotification({ id, message, storeInInbox: true });
                 });
 
                 fetchedArticlesRef.current.add(user.uid);

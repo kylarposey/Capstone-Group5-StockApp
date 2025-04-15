@@ -142,3 +142,19 @@
 .sentiment-badge.bearish {
     background-color: #c0392b;
 }
+
+.bookmark-btn {
+    background: none;
+    border: none;
+    color: #007bff;
+    font-weight: bold;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.news-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}

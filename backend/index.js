@@ -64,9 +64,11 @@ app.get("/api/stock", async (req, res) => {
 app.use(express.json());
 
 const pickRandom = (array, count) => {
-    let shuffled = [...array].sort(() => 0.5 - Math.random());
+    const unique = [...new Set(array)];
+    let shuffled = unique.sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
 };
+
 
 app.post("/api/generatePortfolio", async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
