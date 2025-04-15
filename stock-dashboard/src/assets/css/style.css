@@ -443,3 +443,12 @@ color: #555;
        transform: translateY(0);
     }
  }
+
+ .fear-greed-section {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 50px;
+ }
+ 
+ 

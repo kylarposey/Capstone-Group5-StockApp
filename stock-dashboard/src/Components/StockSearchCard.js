@@ -67,7 +67,7 @@ function StockSearchCard() {
       <>
          <div className="card card-yellow">
             <h2>Stock Search</h2>
-            <p>Look up stock details</p>
+            <p>Search Daily Stock Changes.</p>
             
             {/* Search Bar */}
             <div className="search-container">
