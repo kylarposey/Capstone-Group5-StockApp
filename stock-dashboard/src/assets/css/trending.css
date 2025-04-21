@@ -48,7 +48,7 @@
 .loading-text, .error-text {
     font-size: 16px;
     font-weight: bold;
-    color: red;
+    color: rgb(0, 0, 0);
 }
 
 /* ✅ Floating Notifications */
@@ -113,3 +113,48 @@
     font-size: 12px;
 }
 
+.sentiment-badge {
+    display: inline-block;
+    margin-bottom: 8px;
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    border-radius: 12px;
+    font-weight: bold;
+    color: white;
+}
+
+.sentiment-badge.bullish {
+    background-color: #27ae60;
+}
+
+.sentiment-badge.somewhat-bullish {
+    background-color: #2ecc71;
+}
+
+.sentiment-badge.neutral {
+    background-color: #95a5a6;
+}
+
+.sentiment-badge.somewhat-bearish {
+    background-color: #e67e22;
+}
+
+.sentiment-badge.bearish {
+    background-color: #c0392b;
+}
+
+.bookmark-btn {
+    background: none;
+    border: none;
+    color: #007bff;
+    font-weight: bold;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.news-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}

@@ -17,13 +17,14 @@ export const NotificationContext = createContext();
 function App() {
     const [notifications, setNotifications] = useState([]);
 
-    const addNotification = (message, storeInInbox = false) => {
-        const newNotification = { id: Date.now(), message, storeInInbox };
-
+    const addNotification = (input, storeInInbox = false) => {
+        const newNotification = typeof input === "object"
+            ? input
+            : { id: Date.now(), message: input, storeInInbox };
+    
         setNotifications((prev) => [...prev, newNotification]);
-
-        // ✅ Only remove floating notifications after 7 seconds
-        if (!storeInInbox) {
+    
+        if (!newNotification.storeInInbox) {
             setTimeout(() => {
                 setNotifications((prev) =>
                     prev.filter((n) => n.id !== newNotification.id || n.storeInInbox)
