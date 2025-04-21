@@ -56,22 +56,8 @@ const StockInfoComponent = ({ detailedStockData }) => {
             <StockInfoCard title="Dividends" items={dividends} />
             <StockInfoCard title="Analysis" items={analysis} />
             <StockInfoCard title="Historical Data" items={historical} />
-            
          </div>
          <CreateGaugeComponent analysisRatings={analysis}/>
-        {/*  {console.log(analysis)} */}
-
-        {/*  <div className='stock-gauge-container'>
-               <CreateGaugeComponent  />
-         </div> */}
-         {/* <div className='stock-details-container'>
-            
-            
-
-            <div className='stock-gauge-container'>
-               <CreateGaugeComponent  />
-            </div>
-         </div> */}
       </>
    );
 };

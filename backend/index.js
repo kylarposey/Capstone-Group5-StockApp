@@ -64,9 +64,11 @@ app.get("/api/stock", async (req, res) => {
 app.use(express.json());
 
 const pickRandom = (array, count) => {
-    let shuffled = [...array].sort(() => 0.5 - Math.random());
+    const unique = [...new Set(array)];
+    let shuffled = unique.sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
 };
+
 
 app.post("/api/generatePortfolio", async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
@@ -235,7 +237,7 @@ app.post("/api/trendingNews", async (req, res) => {
             ...(portfolio.crypto || [])
         ];
 
-        tickers = [...new Set(tickers)].slice(0, 6);
+        tickers = [...new Set(tickers)].slice(0, 5);
         console.log("Fetching news for tickers:", tickers);
 
         let newsArticles = [];
@@ -282,7 +284,7 @@ app.post("/api/trendingNews", async (req, res) => {
                     });
 
                     if (response.data && response.data.feed) {
-                        newsArticles.push(...response.data.feed.slice(0, 3));
+                        newsArticles.push(...response.data.feed.slice(0, 2));
                     }
                 } catch (error) {
                     console.error(`🔥 Error fetching category news for ${category}:`, error.message);

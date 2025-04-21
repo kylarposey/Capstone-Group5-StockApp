@@ -417,6 +417,41 @@ body {
    opacity: 1;
 }
 
+ .error-banner {
+    margin-top: 10px;
+    padding: 12px 16px;
+    background-color: #ffe6e6;
+    color: #cc0000;
+    border: 1px solid #ffb3b3;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 6px rgba(255, 0, 0, 0.1);
+    animation: fadeInSlide 0.4s ease-out;
+ }
+ 
+ @keyframes fadeInSlide {
+    from {
+       opacity: 0;
+       transform: translateY(-6px);
+    }
+    to {
+       opacity: 1;
+       transform: translateY(0);
+    }
+ }
+
+ .fear-greed-section {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 50px;
+ }
+ 
+ 
 /* GAUGE STYLING */
 .stock-gauge-container {
    display: grid;

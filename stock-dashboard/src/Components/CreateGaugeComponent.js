@@ -1,32 +1,32 @@
-import GaugeComponent from 'react-gauge-component';
+import {GaugeComponent} from 'react-gauge-component';
+import { calculateBuySellValue } from '../services/calculateBuySellValue';
 
-/* const ratingValue = (data) => {
-   let totalRating = 0;
-   let count = 0;
-   
-}; */ // This value should be dynamically set based on the stock data
 
-const formatRatingLabel = ({value}) => {
+
+const formatRatingLabel = (value) => {
    if (value <= 20) return 'Strong Sell';
    if (value <= 40) return 'Sell';
    if (value <= 60) return 'Hold';
    if (value <= 80) return 'Buy';
    return 'Strong Buy';
- };
+};
 
+// This function uses weigthed average calculation to determine the buy/sell value
+// The value gets fed into the gauge component
 const CreateGaugeComponent = (props) => {
    const { analysisRatings } = props;
-   console.log(analysisRatings);
-   /* const ratings = value;
-   const totalRating = ratings.reduce((acc, rating) => acc + rating, 0);
-   const averageRating = totalRating / ratings.length;
-   const value = Math.round(averageRating); */
+
+   //get amount of analysts rating the stock from strong buy to strong sell
+   const ratingValues = analysisRatings?.slice(1) || []; 
+   //console.log(ratingValues);
+   const buySellRating = calculateBuySellValue(ratingValues);
+   console.log(buySellRating);
 
    return (
       <>
          <div className="gauge-container w-full max-w-[600px] p-4">
             <GaugeComponent
-               value={50}
+               value={buySellRating}
                hideValueLabel={true}           
                type="radial"
                labels={{
@@ -43,10 +43,10 @@ const CreateGaugeComponent = (props) => {
                      ],
                      defaultTickValueConfig: {
                      formatTextValue: formatRatingLabel,
-                     style: {
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                     }
+                        style: {
+                           fontSize: '12px',
+                           fontWeight: 'bold',
+                        }
                      }
                   },
                   valueLabel: {

@@ -43,10 +43,10 @@ function StockDetailPage() {
    return (
       <>
          <div className="search-page-container">
-            <h2 className="search-page-title">Stock Details</h2>
+            <h2 className="search-page-title">Stock Company Details</h2>
             <div className='card-container'>
                <div className="card card-yellow">
-                  <p>Get more detailed stock info</p>
+                  <p>Get more detailed company info</p>
                   {/* Search Bar */}
                   <div className="search-container">
                      <input

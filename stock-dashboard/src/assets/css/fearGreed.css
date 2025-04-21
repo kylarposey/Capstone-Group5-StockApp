@@ -1,0 +1,40 @@
+.fgi-widget {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+    margin: 15px auto;
+    max-width: 150px;
+    height: 200px;
+    background: #fff;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+ }
+ 
+ .fgi-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #111;
+ }
+ 
+ .fgi-circle {
+    height: 100px;
+    width: 100px;
+    margin-bottom: 5px;
+ }
+ 
+ .fgi-score {
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 4px;
+ }
+ 
+ .fgi-label {
+    font-size: 0.9rem;
+    color: #000000;
+    margin-bottom: 2px;
+ }
