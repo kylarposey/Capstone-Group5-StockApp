@@ -1,11 +1,17 @@
 import React from 'react';
 import StockInfoCard from './StockInfoCard';
+import CreateGaugeComponent from './CreateGaugeComponent';
 
 
+// This component uses the StockInfoCard component to display detailed stock information
+// It organizes the data into different sections such as Basic Information, Financials, Dividends, Analysis, and Historical Data
+// Each section is represented by a card with relevant information
 const StockInfoComponent = ({ detailedStockData }) => {
+   // Below arrays contain tooltip information for each section
    const basicInfo = [
       { label: 'Symbol', value: detailedStockData.symbol },
       { label: 'Name', value: detailedStockData.name },
+      { label: 'Asset Type', value: detailedStockData.assetType, tooltip: "The type of asset (e.g., stock, ETF)"  },
       { label: 'Sector', value: detailedStockData.sector, tooltip: "The sector the company operates in"  },
       { label: 'Industry', value: detailedStockData.industry, tooltip: "The industry the company operates in"  },
       { label: 'Exchange', value: detailedStockData.exchange, tooltip: "The market where the stock is traded"  },
@@ -40,14 +46,33 @@ const StockInfoComponent = ({ detailedStockData }) => {
       { label: '200 Day Moving Average', value: detailedStockData.twoHundredDayMovingAvg, tooltip: "Average price over the last 200 days"  },
    ];
 
+
    return (
-      <div className="stock-details-container">
-         <StockInfoCard title="Basic Information" items={basicInfo} />
-         <StockInfoCard title="Financials" items={financials} />
-         <StockInfoCard title="Dividends" items={dividends} />
-         <StockInfoCard title="Analysis" items={analysis} />
-         <StockInfoCard title="Historical Data" items={historical} />
-      </div>
+      // returns StockInfoCard components with the relevant data and tooltips
+      <>
+         <div className="stock-details-container">
+            <StockInfoCard title="Basic Information" items={basicInfo} />
+            <StockInfoCard title="Financials" items={financials} />
+            <StockInfoCard title="Dividends" items={dividends} />
+            <StockInfoCard title="Analysis" items={analysis} />
+            <StockInfoCard title="Historical Data" items={historical} />
+            
+         </div>
+         <CreateGaugeComponent analysisRatings={analysis}/>
+        {/*  {console.log(analysis)} */}
+
+        {/*  <div className='stock-gauge-container'>
+               <CreateGaugeComponent  />
+         </div> */}
+         {/* <div className='stock-details-container'>
+            
+            
+
+            <div className='stock-gauge-container'>
+               <CreateGaugeComponent  />
+            </div>
+         </div> */}
+      </>
    );
 };
 

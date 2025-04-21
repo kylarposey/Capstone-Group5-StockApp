@@ -23,6 +23,7 @@ export const useStockData = () => {
       try {
          const stockInfo = await fetchStockData(ticker, API_URL);
          setStockData(stockInfo);
+         setShowPopup(true);
       } catch (err) {
          setError(err.message);
       } finally {
