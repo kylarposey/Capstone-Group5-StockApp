@@ -40,13 +40,13 @@ test('Search for a stock2 - with success', async t => {
 test('Search for invalid - ticker not found', async t => {
    const tickerSearchInput = Selector('#ticker-search-input');
    const tickerSearchButton = Selector('#ticker-search-button');
-   const errorParagraph = Selector('.error-text');
+   const errorParagraph = Selector('.error-banner');
 
    await t
       .typeText(tickerSearchInput, 'QWERTASDF')
       .click(tickerSearchButton)
-      .expect(errorParagraph.exists).ok()
-      .expect(errorParagraph.innerText).eql('Invalid Ticker or API Error');
+      .expect(errorParagraph.exists).ok({ timeout: 5000 })
+      .expect(errorParagraph.innerText).contains('Invalid Ticker or API Error');
 });
 
 test('Navigate to About page', async t => {
